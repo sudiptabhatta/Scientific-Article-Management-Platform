@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+    <head> 
+       <%- include('./partials/head.ejs') %>
+    </head>
+    <body>
+        <%- include('./partials/nav.ejs') %>
+        <% if(message!=null) {%>
+            <h3><%= message %></h3>
+        <% } %>
+        <form action="article_submit" method="POST" enctype="multipart/form-data">
+            <div>
+               <label for="title"> Article Title </label>
+               <input type = "text" id="title" name = "title" required >
+            </div>
+            <div>
+                <label for="body"> Article Body </label>
+                <textarea type = "text" id="body" name = "body" required > </textarea> </br>
+             </div>
+            <div>
+                <label>Select your profile picture:</label>
+                <input type="file" name="profile_pic" />
+            </div>
+            <label for="category"> Choose a category: </label>
+            <div>
+                <select name="category" id="cate">
+                    <option selected> Select a Category </option>
+                    <% categories.forEach(function(article){ %>
+                        <option value="<%= article.ID %>"> <%= article.Category_Name %> </option>
+                    <% }) %>
+                </select>
+                <input type="submit" name="btn_upload_profile_pic" value="Upload" />
+            </div>
+        </form>    
+    </body>
+</html>

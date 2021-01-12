@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en">
+    <%- include('./partials/head.ejs') %>
+    <body>
+        <%- include('./partials/nav.ejs') %>
+        <div class="create-blog content">
+        <form action = "/categories_submit" method = "post">
+            <label for="Category_Name"> Category Name </label>
+            <input type="text" id="Category_Name" name="Category_Name" required>
+            <button type="submit"> Submit </button>
+        </form>
+    </div>
+    </body>
+</html>

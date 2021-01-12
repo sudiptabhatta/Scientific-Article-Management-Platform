@@ -28,7 +28,21 @@ app.use(bodyParser.urlencoded({ extended: false }))
 // use connect-flash to store flash messages in the session
 app.use(flash())
 
-controller(app)
+// The public directory off of our root folder contains the static files we want to serve
+app.use(express.static('public'))
+
+//define the storage location for our images
+const storage = multer.diskStorage({
+    destination: function (req, file, next) {
+        next(null, 'public/uploads')
+    },
+    // By default, multer removes file extensions so let's add them back
+    filename: function (req, file, next) {
+        next(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname))
+    }
+})
+
+controller(app, multer, storage)
 
 // server listening
 const port = 3000
