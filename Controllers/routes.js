@@ -1,10 +1,14 @@
+const { threadId } = require('./db')
 const connection = require('./db')
 const helpers = require('./helpers')
 
 module.exports = function(app, multer, storage){
 
-    app.get('/', function(req, res){
-        res.render('signup')
+    app.get('/signup', function(req, res){
+        let sql = "SELECT * FROM categories"
+        connection.query(sql, function(err, results){
+            res.render('signup', {categories: results})
+        })
     })
 
     app.post('/save', function(req, res){
@@ -12,18 +16,21 @@ module.exports = function(app, multer, storage){
         let sql = "INSERT INTO researchers SET ?"
         let query = connection.query(sql, data, function(err, results){
             if(err) throw err
-            res.redirect('/')
+            req.flash('msg', 'Signup successful!')
+            res.redirect('/login')
         })
     })
    
     app.get('/login', function(req, res) {
         if (req.session.loggedin == true){
-            res.redirect('/home')
-        }
-        else{
+            if(req.session.privilege == 0){
+                res.redirect('/researcher_timeline')
+            } else {
+                res.redirect('/moderator_timeline')
+            }
+        } else{
             res.render('login', {message: req.flash('msg')})
         }
-        
     })
     
     app.post('/auth', function(req, res) {
@@ -36,8 +43,15 @@ module.exports = function(app, multer, storage){
                     req.session.email = email
                     req.session.uid = results[0].ID
                     req.session.name = results[0].Name
+                    req.session.privilege = results[0].privilege
                     req.session.specialization = results[0].Specialization
-                    res.redirect('/home')
+                    if (req.session.privilege == 0){
+                        res.redirect('/researcher_timeline')
+                    }
+                    else{
+                        res.redirect('/moderator_timeline')
+                    }
+                    
                 } else {
                     req.flash('msg', 'Incorrect email or password!')
                     res.redirect('/login')
@@ -49,35 +63,60 @@ module.exports = function(app, multer, storage){
             res.redirect('/login')
         }
     })
-
-    app.get('/home', function(req, res) {
-        if (req.session.loggedin) {
-            res.send('Welcome back, ' + req.session.email + '!')
-        } else {
-            req.flash('msg', 'Please login to view this page!')
-            res.redirect('/login')
-        }
-        res.end()
-    })
-
+    
     app.get('/logout', function(req, res) {
         req.session.loggedin = null
         req.session.email = null
-        req.session.id = null
+        req.session.uid = null
         req.session.name = null
+        req.session.privilege = null
         req.session.specialization = null
         req.flash('msg', 'Logged out successfully!')
         res.redirect('/login')
     })
 
-    app.get('/article_insert', function(req, res){
-        if (req.session.loggedin == true){
-            let sql = "SELECT * FROM categories"
-            connection.query(sql, function(err, results){
-                res.render('article_insert', {categories: results, message: req.flash('msg')})
+    app.get('/researcher_timeline', function(req, res){
+        if(req.session.loggedin == true){
+            if(req.session.privilege == 0){
+                let sql = "SELECT * FROM categories"
+                let sql1 = `SELECT * FROM articles WHERE Uid = ${req.session.uid}`
+                connection.query(sql, function(err, results){
+                    connection.query(sql1, function(err, rows){
+                        if(err) throw err
+                        res.render('researcher_timeline', {categories: results, articles: rows})
+                    })
+                })
+            }
+        } else {
+            req.flash('msg', 'Please login to view this page')
+            res.redirect('/login')
+        }
+    })
+
+    app.get('/article/:Id', function(req, res){
+        if(req.session.loggedin){
+            const Id = req.params.Id 
+            let sql = `SELECT articles.ID, articles.Title, articles.Body, articles.Image_Path, articles.Created, categories.Category_Name FROM articles JOIN categories ON categories.ID = articles.Cid WHERE articles.ID = ${Id}`
+            let sql1 = "SELECT * FROM categories"
+            connection.query(sql1, function(err, results){
+                connection.query(sql, function(err, row){
+                    if(err) throw err
+                    res.render('article', {categories: results, article: row[0]})
+                })
             })
         }
-        else{
+    })
+
+    app.get('/article_insert', function(req, res){
+        if(req.session.loggedin == true){
+            if (req.session.privilege == 0){
+                let sql = "SELECT * FROM categories"
+                connection.query(sql, function(err, results){
+                    if(err) throw err
+                    res.render('article_insert', {categories: results, message: req.flash('msg')})
+                })
+            }
+        }  else{
             req.flash('msg', 'Please login to view this page!')
             res.redirect('/login')
         }
@@ -105,7 +144,7 @@ module.exports = function(app, multer, storage){
 
             image_path = 'http://localhost:3000/'+req.file.path.substr(7, req.file.path.length - 1)
             
-            let data = { Title: req.body.title, Image_path: image_path, Body: req.body.body, Created: new Date(), cid: req.body.category, uid: req.session.uid}
+            let data = { Title: req.body.title, Image_path: image_path, Body: req.body.body, Created: new Date(), Cid: req.body.category, Uid: req.session.uid}
             //let sql = "INSERT INTO articles (Title, Body, Created) values ('" + req.body.title + "', '" + req.body.body + "', CURDATE())"
             let sql = "INSERT INTO articles SET ?"
             let query =  connection.query(sql, data, function (err) {
@@ -120,12 +159,88 @@ module.exports = function(app, multer, storage){
         })
     })
 
-    app.get('/categories_insert', function(req, res){
-        let sql = "SELECT * FROM categories"
-        connection.query(sql, function(err, results){
-            if(err) throw err
-            res.render('categories_insert', {categories: results})
+    app.get('/article_edit/:Id', function(req, res){
+        if(req.session.loggedin){
+            if(req.session.privilege == 0){
+                const Id = req.params.Id
+                let sql = `SELECT * FROM articles WHERE ID = ${Id}`
+                let sql1 = "SELECT * FROM categories"
+                connection.query(sql1, function(err, cate){
+                    connection.query(sql, function(err, results){
+                        if(err) throw err
+                        res.render('article_edit', {categories: cate, article: results[0]})
+
+                    })
+                })
+            }
+        } else{
+            req.flash('msg', 'Please login to view this page!')
+            res.redirect('/login')
+        }
+    })
+
+    app.post('/update', function(req, res){
+        let upload = multer({ storage: storage, fileFilter: helpers.imageFilter}).single('profile_pic')
+    
+        upload(req, res, function(err) {
+            // req.file contains information of uploaded file
+            // req.body contains information of text fields, if there were any
+            if (req.fileValidationError) {
+                return res.send(req.fileValidationError)
+            }
+            else if (!req.file) {
+                return res.send('Please select an image to upload')
+            }
+            else if (err instanceof multer.MulterError) {
+                return res.send(err)
+            }
+            else if (err) {
+                return res.send(err)
+            }
+
+            image_path = 'http://localhost:3000/'+req.file.path.substr(7, req.file.path.length - 1)
+            const Id = req.body.ID
+            // let sql = "UPDATE articles SET Title = '"+req.body.title+"', Body = '"+req.body.body+"', Image_Path = '"+image_path+"' WHERE ID ="+Id  / \ problem for image path \ -> it is ignored (escape)
+            let sql = 'UPDATE articles SET ? where ID = '+Id
+            let data = {Title: req.body.title, Image_path: image_path, Body: req.body.body, Cid: req.body.category}
+            connection.query(sql, data, function(err, results){
+                if(err) throw err
+                res.redirect('/researcher_timeline')
+            })
         })
+    })
+
+    app.get('/article_delete/:Id', function(req, res){
+        if(req.session.loggedin){
+            const Id = req.params.Id
+            let sql = `DELETE FROM articles WHERE ID = ${Id}`
+            connection.query(sql, function(err, results){
+                if(err) throw err
+                if(req.session.privilege == 0){
+                    res.redirect('/researcher_timeline')
+               
+                } else {
+                    res.redirect('/moderator_timeline')
+               
+                }
+               
+            })
+        }
+     
+    })
+
+    app.get('/categories_insert', function(req, res){
+        if(req.session.privilege == 1){
+            let sql = "SELECT * FROM categories"
+            connection.query(sql, function(err, results){
+                if(err) throw err
+                res.render('categories_insert', {categories: results})
+            })
+        }
+        else{
+            res.redirect('/articles_timeline')
+        }
+       
     })
 
     app.post('/categories_submit', function(req, res){
@@ -134,6 +249,54 @@ module.exports = function(app, multer, storage){
             if(err) throw err
             res.redirect('/categories_insert')
         }) 
+    })
+
+    app.get('/category/:Id', function(req, res){
+        if(req.session.loggedin){
+            const Id = req.params.Id
+            let sql = "SELECT * FROM categories"
+            let sql1 = `SELECT * FROM articles WHERE Cid = ${Id}`
+            connection.query(sql, function(err, results){
+                connection.query(sql1, function(err, rows){
+                    if(err) throw err
+                    res.render('researcher_timeline', {categories: results, articles: rows})
+                })
+            })
+        }  else{
+            req.flash('msg','Please login to continue!')
+            res.redirect('/login')
+        }
+    })
+
+    app.get('/moderator_timeline', function(req, res){
+        if(req.session.loggedin == true){
+            if(req.session.privilege == 1){
+                const Id = req.body.ID
+                let sql = "SELECT * FROM categories"
+                let sql1 = `SELECT * FROM articles WHERE approved = 0`
+                connection.query(sql, function(err, results){
+                    connection.query(sql1, function(err, rows){
+                        if(err) throw err
+                        res.render('moderator_timeline', {categories: results, articles: rows})
+                    })
+                })
+            }
+        } else {
+            req.flash('msg', 'Please login to view this page')
+            res.redirect('/login')
+        }
+    })
+
+    app.get('/article_approve/:Id', function(req, res){
+        if(req.session.loggedin){
+            const Id = req.params.Id
+            let sql = `UPDATE articles SET approved = 1 WHERE ID = ${Id}`
+            connection.query(sql, function(err, results){
+                if(err) throw err
+                    res.redirect('/moderator_timeline')
+            })
+        }
+     
     })
 
 }

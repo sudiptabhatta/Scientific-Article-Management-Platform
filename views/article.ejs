@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+    <%- include('./partials/head.ejs') %>
+<body>
+    <%- include('./partials/nav.ejs') %>
+    
+    <img src="<%= article.Image_Path %> " width="500">
+    <h3> <strong> Title: </strong> <%= article.Title %> </h3>
+    <p> <strong> Body: </strong> <%= article.Body %> </p>
+    <p> <b> Created: </b> <%= article.Created %> </p>
+    <p> <b> Category: </b> <%= article.Category_Name %> </p>
+    <a href="/article_edit/<%= article.ID %>">Edit</a>
+    <a href="/article_delete/<%= article.ID %>" >Delete</a>
+</body>
+</html>

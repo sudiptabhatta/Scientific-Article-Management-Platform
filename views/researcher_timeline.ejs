@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+    <%- include('./partials/head.ejs') %>
+<body>
+    <div class="container">  
+      <%- include('./partials/nav.ejs') %>
+                <% articles.forEach(function(article){ %>   
+                    <img src="<%= article.Image_Path %>" style="width:100%">
+                        <div>
+                          <h4 ><%= article.Title %></h4>
+                          <p > <%= article.Body.substr(0, 100) %></p>
+                          <a href="/article/<%=article.ID%>">Read More</a>
+                        </div>
+                        <div><%= article.Created %></div>
+                        
+                      </div>
+                      <br>
+                      <br>
+              <%  }) %>
+    </div>      
+</body>
+</html>
+
+
+
+
