@@ -9,7 +9,26 @@
     <p> <strong> Body: </strong> <%= article.Body %> </p>
     <p> <b> Created: </b> <%= article.Created %> </p>
     <p> <b> Category: </b> <%= article.Category_Name %> </p>
-    <a href="/article_edit/<%= article.ID %>">Edit</a>
-    <a href="/article_delete/<%= article.ID %>" >Delete</a>
+    <% if (owner == true){%>
+        <a href="/article_edit/<%= article.ID %>">Edit</a>
+        <a href="/article_delete/<%= article.ID %>" >Delete</a>
+        <hr>
+    <%}%>
+   
+    <form action="/comment_submit" method="POST">
+        <input type="hidden" value="<%= article.ID %>" name="ID">
+        <textarea rows="4" cols="50" id = "comment" name = "comment" placeholder="Write a comment..."></textarea> </br>
+        <button type="submit"> Comment </button>
+    </form>
+    <hr>
+    <h4>Comments Posted</h4>
+    <% comments.forEach(function(comment){ %>
+        <div>
+            <h5><%= comment.Name %></h5>
+            <h5><%= comment.Comment %></h5>
+            <h5><%= comment.Created %></h5>
+            <hr>
+        </div>
+    <% }) %>
 </body>
 </html>

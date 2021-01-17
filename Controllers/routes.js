@@ -96,12 +96,18 @@ module.exports = function(app, multer, storage){
     app.get('/article/:Id', function(req, res){
         if(req.session.loggedin){
             const Id = req.params.Id 
-            let sql = `SELECT articles.ID, articles.Title, articles.Body, articles.Image_Path, articles.Created, categories.Category_Name FROM articles JOIN categories ON categories.ID = articles.Cid WHERE articles.ID = ${Id}`
+            let sql = `SELECT articles.ID, articles.Uid, articles.Title, articles.Body, articles.Image_Path, articles.Created, categories.Category_Name FROM articles JOIN categories ON categories.ID = articles.Cid WHERE articles.ID = ${Id}`
             let sql1 = "SELECT * FROM categories"
+            let sql2 = "SELECT comments.Comment, comments.Created, researchers.Name FROM comments JOIN researchers ON comments.Uid = researchers.ID WHERE comments.Aid="+Id
             connection.query(sql1, function(err, results){
                 connection.query(sql, function(err, row){
-                    if(err) throw err
-                    res.render('article', {categories: results, article: row[0]})
+                    connection.query(sql2, function(err, row2){
+                        if(err) throw err
+                         let poster_id = row[0].Uid
+                         let logged_in_id = req.session.uid
+                         let owner_flag = (poster_id == logged_in_id) //owner: owner_flag
+                         res.render('article', {categories: results, article: row[0], comments: row2, owner: owner_flag})
+                    })  
                 })
             })
         }
@@ -223,10 +229,8 @@ module.exports = function(app, multer, storage){
                     res.redirect('/moderator_timeline')
                
                 }
-               
             })
         }
-     
     })
 
     app.get('/categories_insert', function(req, res){
@@ -297,6 +301,41 @@ module.exports = function(app, multer, storage){
             })
         }
      
+    })
+
+    app.post('/comment_submit', function(req, res){
+        if(req.session.loggedin){
+            if(req.session.privilege == 0){
+                const Id = req.body.ID
+                let data = {comment: req.body.comment, uid: req.session.uid, aid: Id, Created: new Date()}
+                let sql = "INSERT INTO comments SET ? "
+                connection.query(sql, data, function(err, results){
+                    if(err) throw err
+                    res.redirect('back')
+                })
+            }
+        } else {
+            req.flash('msg', 'Please login to view this page!')
+            res.redirect('/login')
+        }
+    })
+
+    app.get('/profile/:Email', function(req, res){
+        if(req.session.loggedin){
+            const Email = req.params.Email
+            let sql = "SELECT * FROM categories"
+            let sql1 = `SELECT researchers.ID, researchers.Name, articles.ID, articles.Title, articles.Body, articles.Image_Path, articles.Created FROM articles JOIN researchers ON articles.Uid = researchers.ID WHERE researchers.Email = '${Email}'`
+            connection.query(sql, function(err, results){
+                connection.query(sql1, function(err, rows){
+                    if(err) throw err
+                    console.log(rows)
+                    res.render('public_profile', {categories: results, articles: rows})
+                })
+            })
+        } else {
+            req.flash('msg', 'Please login to view this page!')
+            res.redirect('/login')
+        }
     })
 
 }
