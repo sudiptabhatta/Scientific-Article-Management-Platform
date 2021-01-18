@@ -2,9 +2,9 @@
 <html>
     <head> 
        <%- include('./partials/head.ejs') %>
-       <%- include('./partials/nav.ejs') %>
     </head>
     <body>
+        <%- include('./partials/nav.ejs') %>
         <form action="/update" method="POST" enctype="multipart/form-data">
             <input type="hidden" value="<%= article.ID %>" name="ID">
             <div>

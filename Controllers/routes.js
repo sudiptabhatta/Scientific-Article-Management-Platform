@@ -408,4 +408,41 @@ module.exports = function(app, multer, storage){
         }
     })
 
+    app.get('/search', function(req, res){
+        if(req.session.loggedin){
+            let sql = "SELECT * FROM categories"
+            let sql1 = `SELECT articles.ID, articles.Title, articles.Body, articles.Image_Path, articles.Created, researchers.Name FROM articles JOIN researchers ON articles.Uid = researchers.ID WHERE articles.Cid = ${req.session.specialization}`
+            let sql2 = 'SELECT categories.Category_Name, COUNT(*) as Category_Count FROM articles JOIN categories ON articles.Cid = categories.ID GROUP BY cid'
+            connection.query(sql, function(err, results){
+                connection.query(sql1, function(err, rows){
+                    connection.query(sql2, function(err, stats){
+                        if(err) throw err
+                        let search_title = 'Suggestions'
+                        res.render('search', {categories: results, articles: rows, search_title: search_title, statistics: stats})
+                    })
+                    
+                })
+            })
+        } else {
+            req.flash('msg', 'Please login to view this page!')
+            res.redirect('/login')
+        }
+    })
+
+    app.post('/search', function(req, res){
+        let search = req.body.search
+        let sql = "SELECT * FROM categories"
+        let sql1 = `SELECT articles.ID, articles.Title, articles.Body, articles.Image_Path, articles.Created, researchers.Name FROM articles JOIN researchers ON articles.Uid = researchers.ID WHERE articles.Title LIKE '%${search}%'`
+        let sql2 = 'SELECT categories.Category_Name, COUNT(*) as Category_Count FROM articles JOIN categories ON articles.Cid = categories.ID GROUP BY cid'
+        connection.query(sql, function(err, results){
+            connection.query(sql1, function(err, rows){
+                connection.query(sql2, function(err, stats){
+                    if(err) throw err
+                    let search_title = 'Search Results'
+                    res.render('search',{categories: results, articles: rows, search_title: search_title, statistics: stats})
+                })
+            })
+        })
+    })
+
 }

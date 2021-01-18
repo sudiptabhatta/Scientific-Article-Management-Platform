@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+    <%- include('./partials/head.ejs') %>
+<body>
+    <%- include('./partials/nav.ejs') %>
+    <div class="container"> 
+        <br>
+        <div class="row text-center">
+            <div class="col-md-5"> </div>
+            <% if (statistics.length > 0){ %>
+            </br><h4 class="row text-center">Popular Categories!!</h4>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Category</th>
+                        <th>Articles Available</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% statistics.forEach(function(statistics){ %>
+                        <tr>
+                            <td><%= statistics.Category_Name %></td>
+                            <td><%= statistics.Category_Count %></td>
+                        </tr>
+                    <%  }) %>  
+                </tbody>
+            </table>
+            <% } %> 
+        </div>
+        <form action="/search" method="POST">
+            <label for="search">Search Article:</label>
+            <input type="search" id="search" name="search">
+            <input type="submit">
+        </form>
+        <hr>
+        <% if (articles.length > 0){ %>
+             <h3 class="text-center"><%= search_title %></h3> 
+            <% articles.forEach(function(article){ %>   
+                <img src="<%= article.Image_Path %>" style="width:100%">
+                    <div>
+                      <h4 ><%= article.Title %></h4>
+                      <p > <%= article.Body.substr(0, 100) %></p>
+                      <a href="/article/<%=article.ID%>">Read More</a>
+                    </div>
+                    <div>By: <%= article.Name %></div>
+                    <div>By: <%= article.Created %></div>
+                  </div>
+                  <br>
+                  <br>
+          <%  }) %>
+        <% } %>
+    </div>      
+</body>
+</html>
