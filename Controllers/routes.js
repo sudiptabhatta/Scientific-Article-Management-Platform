@@ -324,16 +324,86 @@ module.exports = function(app, multer, storage){
         if(req.session.loggedin){
             const Email = req.params.Email
             let sql = "SELECT * FROM categories"
-            let sql1 = `SELECT researchers.ID, researchers.Name, articles.ID, articles.Title, articles.Body, articles.Image_Path, articles.Created FROM articles JOIN researchers ON articles.Uid = researchers.ID WHERE researchers.Email = '${Email}'`
+            let sql1 = `SELECT articles.ID, articles.Title, articles.Body, articles.Image_Path, articles.Created FROM articles JOIN researchers ON articles.Uid = researchers.ID WHERE researchers.Email = '${Email}'`
+            let sql2 = `SELECT ID, Name, Email FROM  researchers WHERE Email = '${Email}'`
             connection.query(sql, function(err, results){
                 connection.query(sql1, function(err, rows){
-                    if(err) throw err
-                    console.log(rows)
-                    res.render('public_profile', {categories: results, articles: rows})
+                    connection.query(sql2, function(err, rids){
+                        let sql3 = `SELECT * FROM followers WHERE Uid1 = ${req.session.uid} AND Uid2 = ${rids[0].ID}`
+                        connection.query(sql3, function(err, follow){
+                            if(err) throw err
+                            let follow_flag = false
+                            if(follow.length == 1){
+                                follow_flag = true
+                            }
+                            res.render('public_profile', {categories: results, articles: rows, profile: rids[0], follow: follow_flag})
+                        })
+                        
+                    })
                 })
             })
         } else {
             req.flash('msg', 'Please login to view this page!')
+            res.redirect('/login')
+        }
+    })
+
+    app.get('/profile/follow/:Uid2', function(req, res){
+        if(req.session.loggedin){
+            if(req.session.privilege == 0){
+                const Uid2 = req.params.Uid2
+                let data = {Uid1: req.session.uid, Uid2: Uid2}
+                let sql = "SELECT * FROM categories"  
+                let sql1 = "INSERT INTO followers SET ? "
+                connection.query(sql, function(err, results){
+                    connection.query(sql1, data, function(err, results1){
+                        if(err) throw err
+                        res.redirect('back')
+                    })
+                })
+            }
+        } else {
+            req.flash('msg', 'Please login to view this page!')
+            res.redirect('/login')
+        }
+    })
+
+    app.get('/profile/unfollow/:Uid2', function(req, res){
+        if(req.session.loggedin){
+            if(req.session.privilege == 0){
+                const Uid2 = req.params.Uid2
+                let sql = "SELECT * FROM categories"
+                let sql1 = `DELETE FROM followers WHERE Uid1 = ${req.session.uid} and Uid2 = ${parseInt(Uid2)}`
+                connection.query(sql, function(err, results){
+                    connection.query(sql1, function(err, results1){
+                        if(err) throw err
+                        res.redirect('back')
+                    })
+                })
+            }
+        } else {
+            req.flash('msg', 'Please login to view this page!')
+            res.redirect('/login')
+        }
+    })
+
+    app.get('/follows/:Email', function(req, res){
+        if(req.session.loggedin){
+            let Email = req.params.Email
+            let sql = "SELECT * FROM categories"
+            let sql1 = `SELECT Name FROM researchers WHERE ID IN(SELECT Uid2 FROM followers WHERE Uid1 = (SELECT ID FROM researchers WHERE Email = '${Email}'))`
+            let sql2 = `SELECT Name FROM researchers WHERE ID IN(SELECT Uid1 FROM followers WHERE Uid2 = (SELECT ID FROM researchers WHERE Email = '${Email}'))`
+            connection.query(sql, function(err, results){
+                connection.query(sql1, function(err, rows){
+                    connection.query(sql2, function(err, tuples){
+                     if(err) throw err
+                     res.render('myFollows', {categories: results, following: rows, followers: tuples})
+                    })
+                })
+            })
+        } else {
+            req.flash('msg', 'Please login to view this page!')
+            
             res.redirect('/login')
         }
     })
