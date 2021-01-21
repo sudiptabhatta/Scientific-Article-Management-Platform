@@ -1,0 +1,15 @@
+body {
+    background: #fbf3ff;
+    background-image: url(background.jpg);
+                background-repeat: no-repeat;
+                background-size: 100%;
+  } 
+
+p{
+    padding-top: 30%;
+    font-family: sans-serif;
+    font-size: 70px;
+}
+p1{
+    font-size: 30px;
+}
