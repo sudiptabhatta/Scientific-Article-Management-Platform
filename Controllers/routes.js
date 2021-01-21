@@ -1,4 +1,3 @@
-const { threadId } = require('./db')
 const connection = require('./db')
 const helpers = require('./helpers')
 
@@ -242,7 +241,7 @@ module.exports = function(app, multer, storage){
             })
         }
         else{
-            res.redirect('/articles_timeline')
+            res.redirect('/researchers_timeline')
         }
        
     })
