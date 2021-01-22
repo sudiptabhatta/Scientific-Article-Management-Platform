@@ -421,6 +421,7 @@ module.exports = function(app, multer, storage){
                     connection.query(sql2, function(err, stats){
                         if(err) throw err
                         let search_title = 'Suggestions'
+                        console.log(rows)
                         res.render('search', {categories: results, articles: rows, search_title: search_title, statistics: stats})
                     })
                     

@@ -34,13 +34,13 @@
                             </div>
                             <div class="form-group">
                                 <label for="specialization"> Select Specialization: </label>
-                                <select name="specialization" id="specialization">
+                                <select class="custom-select" name="specialization" id="specialization">
                                     <option value="">-- Select your specialization -- </option>
                                     <% categories.forEach(function(article){ %>
                                         <option value="<%= article.ID %>"> <%= article.Category_Name %> </option>
                                     <% }) %>
                                 </select>
-                                                                <br><br>
+                                <br><br>
                             </div>
 
                             <div class="form-group">

@@ -1,34 +1,64 @@
 <!DOCTYPE html>
 <html lang="en">
-
-    <%- include('./partials/head.ejs') %>
+    <%- include('./partials/header.ejs') %>
 <body>
     <%- include('./partials/nav.ejs') %>
-    <img src="<%= article.Image_Path %> " width="500">
-    <h3> <strong> Title: </strong> <%= article.Title %> </h3>
-    <p> <strong> Body: </strong> <%= article.Body %> </p>
-    <p> <b> Created: </b> <%= article.Created %> </p>
-    <p> <b> Category: </b> <%= article.Category_Name %> </p>
-    <% if (owner == true){%>
-        <a href="/article_edit/<%= article.ID %>">Edit</a>
-        <a href="/article_delete/<%= article.ID %>" >Delete</a>
-        <hr>
-    <%}%>
-   
-    <form action="/comment_submit" method="POST">
-        <input type="hidden" value="<%= article.ID %>" name="ID">
-        <textarea rows="4" cols="50" id = "comment" name = "comment" placeholder="Write a comment..."></textarea> </br>
-        <button type="submit"> Comment </button>
-    </form>
-    <hr>
-    <h4>Comments Posted</h4>
-    <% comments.forEach(function(comment){ %>
-        <div>
-            <h5><%= comment.Name %></h5>
-            <h5><%= comment.Comment %></h5>
-            <h5><%= comment.Created %></h5>
-            <hr>
+    <br>
+    <div class="container">  
+        <div class="row">
+            <div class="col-md-3"> </div>
+            <div class="col-md-4">
+              <div class="col-sm">
+                <div class="card text-info border-info  mb-3 shadow bg-white rounded" alt="Card image" style="width:600px">
+                    <img class="card-img-top" src="<%= article.Image_Path %> " width="100%">
+                    <div class="card-body text-dark">
+                        <h3 class="card-title text-info"> <strong> Title: </strong> <%= article.Title %> </h3>
+                        <p class="card-text"> <strong> Body: </strong> <%= article.Body %> </p>
+                        <p class="card-text"> <b> Category: </b> <%= article.Category_Name %> </p>
+                        <p  class="card-text"> <b> Created: </b> <%= article.Created %> </p>
+                        <% if (owner == true){%>
+                            <hr>
+                            <a href="/article_edit/<%= article.ID %>" class="btn btn-outline-warning btn-sm">Edit</a>
+                            <a href="/article_delete/<%= article.ID %>"  class="btn btn-outline-danger btn-sm">Delete</a>
+                        <%}%>
+                    </div>
+                </div>
+              </div>
+            </div> 
         </div>
-    <% }) %>
+    </div>     
+    <br>
+    <div class="container">  
+        <div class="row">
+            <div class="col-md-3"> </div>
+            <div class="col-md-4">
+              <div class="col-sm">
+                <div class="card text-info border mb-3 shadow bg-white rounded" alt="Card image" style="width:600px">
+                    <div class="card-body text-dark">
+                    <form action="/comment_submit" method="POST">
+                        <input type="hidden" value="<%= article.ID %>" name="ID">
+                        <textarea rows="4" cols="50" id = "comment" name = "comment" placeholder="Write a comment..."></textarea> </br>
+                        <button type="submit" class="btn btn-primary btn-sm"> Comment </button>
+                    </form>
+                    <% comments.forEach(function(comment){ %>
+                        <div>
+                            <hr>
+                            <h5><%= comment.Name %></h5>
+                            <h7><%= comment.Comment %></h7> <br>
+                            <h9 class="text-secondary"><%= comment.Created %></h9>
+                     
+                                <br>
+                                <a href="/article_edit/<%= article.ID %>" class="text-warning">Edit</a>
+                                <a href="/article_delete/<%= article.ID %>"  class="text-danger">Delete</a>
+                          
+                        </div>
+                    <% }) %>
+                    </div>
+                </div>
+            </div>
+        </div> 
+    </div>
+</div>   
 </body>
 </html>
+

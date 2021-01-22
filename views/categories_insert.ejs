@@ -1,14 +1,37 @@
 <!DOCTYPE html>
-<html lang="en">
-    <%- include('./partials/head.ejs') %>
+<html>
+       <%- include('./partials/head.ejs') %>
+
     <body>
         <%- include('./partials/nav.ejs') %>
-        <div class="create-blog content">
-        <form action = "/categories_submit" method = "post">
-            <label for="Category_Name"> Category Name </label>
-            <input type="text" id="Category_Name" name="Category_Name" required>
-            <button type="submit"> Submit </button>
-        </form>
-    </div>
+        <br><br>
+        <br> <br> <br>
+        <div class="container">  
+            <div class="row">
+                <div class="col-md-5"> </div>
+                <div class="col-md-6">
+                  <div class="col-sm">
+                    <div class="card text-info border-info  mb-3 shadow bg-white rounded" style="width:600px"> <br>
+                        <div class="row text-center">
+                            <div class="col-md-3"> </div>
+                            <div class="col-md-6">
+                        <div class="create-blog content">
+                            <form action = "/categories_submit" method = "post">
+                                <div class="input-group mb-4">
+                                    <div class="input-group-prepend">
+                                      <span class="input-group-text">Category Name</span>
+                                    </div>
+                                    <input type="text"  class="form-control" id="Category_Name" name="Category_Name" required> 
+                                </div> 
+                                <button type="submit" class="btn btn-success"> Submit </button>
+                            </form> <br>
+                            </div>
+                            </div>
+                        </div>
+                    </div>
+                   </div> 
+                </div>
+         </div>      
+        </div>
     </body>
 </html>

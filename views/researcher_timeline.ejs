@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-    <%- include('./partials/head.ejs') %>
+    <%- include('./partials/header.ejs') %>
 
 <body>
     <%- include('./partials/nav.ejs') %>
@@ -15,10 +15,10 @@
               <div class="col-md-3">
                 <br>
                   <div class="card-deck">
-                  <div class="card border-info mb-3" style="max-width: 18rem;"">
+                  <div class="card border-info mb-3 shadow bg-white rounded" style="max-width: 18rem;">
                     <img class="card-img-top" height="125rem" src="<%= article.Image_Path %>" alt="Card image cap">
                     <div class="card-body text-dark">
-                      <h5 class="card-title"><%= article.Title.substr(0,22) %></h5>
+                      <h5 class="card-title text-info"><%= article.Title.substr(0,22) %></h5>
                       <p class="card-text"><%= article.Body.substr(0, 100) %></p>
                       <a href="/article/<%=article.ID%>" class="btn btn-primary btn-sm">Read More</a>
                     </div>
