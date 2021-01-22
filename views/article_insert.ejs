@@ -2,35 +2,87 @@
 <html>
     <head> 
        <%- include('./partials/head.ejs') %>
+
+
+       <!-- Bootstrap CSS -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+        <link rel="stylesheet" href="/stylesheet/article_insert.css">
+
+
     </head>
     <body>
         <%- include('./partials/nav.ejs') %>
         <% if(message!=null) {%>
             <h3><%= message %></h3>
         <% } %>
+
+    <div class="contact-section p-2 row justify-content-md-center">
+    
+        <div class="title text-center mb-3 col-12">
+            <h3 class="font-weight-bolder">Publish Your Article</h3>
+        </div>
+    </div> 
+
         <form action="article_submit" method="POST" enctype="multipart/form-data">
-            <div>
-               <label for="title"> Article Title </label>
-               <input type = "text" id="title" name = "title" required >
+        <div class="row justify-content-md-center">
+            <div class="form-group col-6">
+                <b><label for="title"> Article Title </label></b>
+                <input type = "text" class="form-control" id="title" name = "title" placeholder="Your Article Name Here" required >
             </div>
-            <div>
-                <label for="body"> Article Body </label>
-                <textarea type = "text" id="body" name = "body" required > </textarea> </br>
-             </div>
-            <div>
-                <label>Select your profile picture:</label>
-                <input type="file" name="profile_pic" />
+        </div>    
+
+        <div class="row justify-content-md-center p-2">
+            <div class="input-group col-6">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">Article Body</span>
+                </div>
+                <textarea class="form-control" aria-label="With textarea" type = "text" id="body" name = "body" required> </textarea>
             </div>
-            <label for="category"> Choose a category: </label>
-            <div>
-                <select name="category" id="cate">
+        </div>
+
+        <div class="row justify-content-md-center">
+            <b><label for="title">Select your profile picture:</label></b>
+        </div>
+        <div class="row justify-content-md-center p-2">
+            
+            <div class="custom-file col-6">
+                <label class="custom-file-label" for="customFile">Choose Profile Picture</label>
+                <input type="file" class="custom-file-input" id="customFile">
+            </div>
+        </div>
+        
+        <div class="row justify-content-md-center">
+            <b><label for="category"> Choose a category: </label></b>
+        </div>
+        <div class="row justify-content-md-center">
+            <div class="custom-file col-6">
+                <select class="custom-select my-1 mr-sm-2" id="inlineFormCustomSelectPref">
                     <option selected> Select a Category </option>
                     <% categories.forEach(function(article){ %>
                         <option value="<%= article.ID %>"> <%= article.Category_Name %> </option>
                     <% }) %>
                 </select>
-                <input type="submit" name="btn_upload_profile_pic" value="Upload" />
             </div>
-        </form>    
+        </div>
+
+        <div class="row justify-content-md-center p-2">
+            <button type="submit" class="btn btn-primary my-1">Submit</button>
+        </div>
+
+        </form> 
+     
+    </div>
+
+        
+        
+
+
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
     </body>
 </html>
