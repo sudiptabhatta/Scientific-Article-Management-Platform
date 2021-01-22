@@ -1,23 +1,35 @@
 <!DOCTYPE html>
 <html lang="en">
     <%- include('./partials/head.ejs') %>
+
 <body>
     <%- include('./partials/nav.ejs') %>
+
+    <br>
     <div class="container">  
-                <% articles.forEach(function(article){ %>   
-                    <img src="<%= article.Image_Path %>" style="width:100%">
-                        <div>
-                          <h4 ><%= article.Title %></h4>
-                          <p > <%= article.Body.substr(0, 100) %></p>
-                          <a href="/article/<%=article.ID%>">Read More</a>
-                        </div>
-                        <div><%= article.Created %></div>
-                        
+            <% articles.forEach(function(article, index){ %>  
+              <% if (index % 4 == 0){ %>
+                <div class="row"> 
+              <% } %>
+              
+              <div class="col-md-3">
+                <br>
+                  <div class="card-deck">
+                  <div class="card border-info mb-3" style="max-width: 18rem;"">
+                    <img class="card-img-top" height="125rem" src="<%= article.Image_Path %>" alt="Card image cap">
+                    <div class="card-body text-dark">
+                      <h5 class="card-title"><%= article.Title.substr(0,22) %></h5>
+                      <p class="card-text"><%= article.Body.substr(0, 100) %></p>
+                      <a href="/article/<%=article.ID%>" class="btn btn-primary btn-sm">Read More</a>
+                    </div>
+                    <div class="card-footer text-secondary"><%= article.Created %></div>
                       </div>
-                      <br>
-                      <br>
-              <%  }) %>
-    </div>      
+                    </div>
+                </div>
+                <% if ((index+1) % 4 == 0){ %> </div>
+                <% } %>
+            <%  }) %> 
+      </div>    
 </body>
 </html>
 

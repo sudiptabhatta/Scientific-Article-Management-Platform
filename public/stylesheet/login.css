@@ -1,0 +1,97 @@
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+  }
+  body {
+    background: #fbf3ff;
+    background-image: url(background.jpg);
+                background-repeat: no-repeat;
+                background-size: 100%;
+  } 
+  .container {
+    position: absolute;
+    max-width: 800px;
+    height: 500px;
+    margin: auto;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  } 
+  .myLeftCtn {
+    position: relative;
+    background: #fff;
+    box-shadow: 10px 10px 0px 0px rgba(0, 0, 0, 0.116);
+    border-radius: 25px;
+    height: 130%;
+    padding: 25px;
+    padding-left: 50px;
+    left: 150%;
+  }
+  .myLeftCtn header {
+    color: blueviolet;
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 20px;
+  }
+  .row{
+    height: 100%;
+    } 
+    
+    .myLeftCtn .myInput {
+        width: 250px;
+        border-radius: 25px;
+        padding: 10px;
+        padding-left: 50px;
+        border: none;
+        -webkit-box-shadow: 0px 10px 49px -14px rgba(0, 0, 0, 0.7);
+        -moz-box-shadow: 0px 10px 49px -14px rgba(0, 0, 0, 0.7);
+        box-shadow: 0px 10px 49px -14px rgba(0, 0, 0, 0.7);
+      }
+      .myLeftCtn .myInput:focus {
+        outline: none;
+      } 
+      .myForm {
+        position: relative;
+        right: 5%;
+        margin-top: 50px;
+      } 
+      .myLeftCtn .butt {
+        background: linear-gradient(45deg, #bb36fd, #9b00e8);
+        color: #fff;
+        width: 230px;
+        border: none;
+        border-radius: 25px;
+        padding: 10px;
+        -webkit-box-shadow: 0px 10px 41px -11px rgba(0, 0, 0, 0.7);
+        -moz-box-shadow: 0px 10px 41px -11px rgba(0, 0, 0, 0.7);
+        box-shadow: 0px 10px 41px -11px rgba(0, 0, 0, 0.7);
+      } 
+      .myLeftCtn .butt:hover {
+        background: linear-gradient(45deg, #ff5b84, #b726ff);
+      }
+      .myLeftCtn .butt:focus {
+        outline: none;
+      } 
+      .myLeftCtn .fas {
+        position: relative;
+        color: #bb36fd;
+        left: 36px;
+      } 
+      .butt_out {
+        background: transparent;
+        color: #fff;
+        width: 120px;
+        border: 2px solid#fff;
+        border-radius: 25px;
+        padding: 10px;
+        -webkit-box-shadow: 0px 10px 49px -14px rgba(0, 0, 0, 0.7);
+        -moz-box-shadow: 0px 10px 49px -14px rgba(0, 0, 0, 0.7);
+        box-shadow: 0px 10px 49px -14px rgba(0, 0, 0, 0.7);
+      } 
+      .butt_out:hover {
+        border: 2px solid#eecbff;
+      } 
+      .butt_out:focus {
+        outline: none;
+      }

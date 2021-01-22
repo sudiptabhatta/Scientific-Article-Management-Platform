@@ -3,6 +3,10 @@ const helpers = require('./helpers')
 
 module.exports = function(app, multer, storage){
 
+    app.get('/home', function(req, res){
+        res.render('home')
+    })
+
     app.get('/signup', function(req, res){
         let sql = "SELECT * FROM categories"
         connection.query(sql, function(err, results){
