@@ -17,14 +17,14 @@ There will be Moderator types on this website. The moderator can approve or dele
 
 After logging in, there will be a dashboard for every researcher to see their own articles. If they want to update or delete the article, they can go to their dashboard and edit, update or delete at their own will.
 
-If anyone wants to review an article or read the article, they can click on any article they like, then read it, comment on it, and show their preference in the article. Researchers can follow each other as well. There will also be the option of a review in which most commented articles of any researchers will be shown.
+If anyone wants to review an article or read the article, they can click on any article they like, then read it, comment on it, and show their preference in the article. Researchers can follow and unfollow each other as well. 
 
-There will also be a search option. After clicking it, suggested articles of specialized categories of any researcher will be popped up there, and the researcher can also search for any articles and read them. There will include a popular category that will show total new articles of any specialization to find out the popular section easily.
+There will also be a search option. After clicking it, suggested articles of specialized categories of any researcher will be popped up there, and the researcher can also search for any articles and read them.
 
 Above all these, if possible, we are planning to show some statistics by GROUP BY according to the article category for the benefit of the researcher.
 
 #### Responsibility by each team member:
 - Sudipta Bhatta - Backend + Frontend
-- Tasin Towsif Rahman – Frontend + Backend
+- Tasin Towsif Rahman – Frontend
 - Mahjabin Akhter - Frontend
 - Hasibul Islam Shanto - Frontend
