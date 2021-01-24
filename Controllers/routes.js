@@ -108,7 +108,7 @@ module.exports = function(app, multer, storage){
                         if(err) throw err
                          let poster_id = row[0].Uid
                          let logged_in_id = req.session.uid
-                         let owner_flag = (poster_id == logged_in_id) //owner: owner_flag
+                         let owner_flag = (poster_id == logged_in_id) 
                          res.render('article', {categories: results, article: row[0], comments: row2, owner: owner_flag})
                     })  
                 })

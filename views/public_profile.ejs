@@ -1,32 +1,41 @@
 <!DOCTYPE html>
 <html lang="en">
-    <%- include('./partials/head.ejs') %>
+    <%- include('./partials/header.ejs') %>
 <body>
     <%- include('./partials/nav.ejs') %>
-    <div class="container">  
-                    <div class="text-center">
-                      <h4><%= profile.Name %>'s Profile</h4>  
-                      <% if(follow == false){%>
-                      <a href="/profile/follow/<%= profile.ID %>"> <button type="button" class="btn btn-info">Follow</button> </a>
-                      <%} else {%>
-                        <h5>already following</h5>
-                        <a href="/profile/unfollow/<%= profile.ID %>"> <button type="button" class="btn btn-danger">Unfollow</button> </a>
-                        <% } %>
-                        <a href="/follows/<%= profile.Email %>"> <button type="button" class="btn btn-info">Checkout My Followers!</button> </a>
-                    </div> <br> 
-                    <% articles.forEach(function(article){ %>
-                    <img src="<%= article.Image_Path %>" style="width:100%">
-                        <div>
-                          <h4 ><%= article.Title %></h4>
-                          <p > <%= article.Body.substr(0, 100) %></p>
-                          <a href="/article/<%=article.ID%>">Read More</a>
-                        </div>
-                        <div><%= article.Created %></div>
-                        
+    <br>
+    <div class="container"> 
+      <div class="text-center">
+        <h4><%= profile.Name %>'s Profile</h4>  
+        <% if(follow == false){%>
+        <a href="/profile/follow/<%= profile.ID %>"> <button type="button" class="btn btn-info">Follow</button> </a>
+        <%} else {%>
+          <h5>already following</h5>
+          <a href="/profile/unfollow/<%= profile.ID %>"> <button type="button" class="btn btn-danger">Unfollow</button> </a>
+          <% } %>
+          <a href="/follows/<%= profile.Email %>"> <button type="button" class="btn btn-info">Checkout My Followers!</button> </a>
+      </div> <br>  
+            <% articles.forEach(function(article, index){ %>  
+              <% if (index % 4 == 0){ %>
+                <div class="row"> 
+              <% } %>
+              <div class="col-md-3">
+                <br>
+                  <div class="card-deck">
+                  <div class="card border-info mb-3 shadow bg-white rounded" style="max-width: 18rem;">
+                    <img class="card-img-top" height="125rem" src="<%= article.Image_Path %>" alt="Card image cap">
+                    <div class="card-body text-dark">
+                      <h5 class="card-title text-info"><%= article.Title.substr(0,22) %></h5>
+                      <p class="card-text"><%= article.Body.substr(0, 100) %></p>
+                      <a href="/article/<%=article.ID%>" class="btn btn-primary btn-sm">Read More</a>
+                    </div>
+                    <div class="card-footer text-secondary"><%= article.Created %></div>
                       </div>
-                      <br>
-                      <br>
-              <%  }) %>
-    </div>      
+                    </div>
+                </div>
+                <% if ((index+1) % 4 == 0){ %> </div>
+                <% } %>
+            <%  }) %> 
+      </div>     
 </body>
 </html>
