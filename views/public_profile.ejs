@@ -6,7 +6,7 @@
     <br>
     <div class="container"> 
       <div class="text-center">
-        <h4><%= profile.Name %>'s Profile</h4>  
+        <h4 class=""><%= profile.Name %>'s Profile</h4>  
         <% if(follow == false){%>
         <a href="/profile/follow/<%= profile.ID %>"> <button type="button" class="btn btn-info">Follow</button> </a>
         <%} else {%>
