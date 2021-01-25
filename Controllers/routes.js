@@ -1,5 +1,6 @@
 const connection = require('./db')
 const helpers = require('./helpers')
+const bcrypt = require('bcryptjs')
 
 module.exports = function(app, multer, storage){
 
@@ -15,13 +16,21 @@ module.exports = function(app, multer, storage){
     })
 
     app.post('/save', function(req, res){
-        let data = {name: req.body.name, email: req.body.name, password: req.body.password, specialization: req.body.specialization}
-        let sql = "INSERT INTO researchers SET ?"
-        let query = connection.query(sql, data, function(err, results){
-            if(err) throw err
-            req.flash('msg', 'Signup successful!')
-            res.redirect('/login')
+        
+        bcrypt.genSalt(10, function(err, salt){
+            bcrypt.hash(req.body.password, salt, function(err, hash){
+                let data = {name: req.body.name, email: req.body.email, password: hash, specialization: req.body.specialization}
+                let sql = "INSERT INTO researchers SET ?"
+                let query = connection.query(sql, data, function(err, results){
+                    if(err) throw err
+                    req.flash('msg', 'Signup successful!')
+                    res.redirect('/login')
+                })
+            })
         })
+        
+        
+        
     })
    
     app.get('/login', function(req, res) {
@@ -40,21 +49,28 @@ module.exports = function(app, multer, storage){
         var email = req.body.email
         var password = req.body.password
         if (email && password) {
-            connection.query('SELECT * FROM researchers WHERE Email = ? AND Password = ?', [email, password], function(error, results, fields) {
+            connection.query('SELECT * FROM researchers WHERE Email = ?', [email], function(error, results, fields) {
                 if (results.length > 0) {
-                    req.session.loggedin = true
-                    req.session.email = email
-                    req.session.uid = results[0].ID
-                    req.session.name = results[0].Name
-                    req.session.privilege = results[0].privilege
-                    req.session.specialization = results[0].Specialization
-                    if (req.session.privilege == 0){
-                        res.redirect('/researcher_timeline')
+                    let match = bcrypt.compareSync(password, results[0].Password)
+                    if (match == true){
+                        req.session.loggedin = true
+                        req.session.email = email
+                        req.session.uid = results[0].ID
+                        req.session.name = results[0].Name
+                        req.session.privilege = results[0].privilege
+                        req.session.specialization = results[0].Specialization
+                        if (req.session.privilege == 0){
+                            console.log('here', req.session)
+                            res.redirect('/researcher_timeline')
+                        }
+                        else{
+                            res.redirect('/moderator_timeline')
+                        }
                     }
                     else{
-                        res.redirect('/moderator_timeline')
+                        req.flash('msg', 'Incorrect email or password!')
+                        res.redirect('/login')
                     }
-                    
                 } else {
                     req.flash('msg', 'Incorrect email or password!')
                     res.redirect('/login')
@@ -79,6 +95,7 @@ module.exports = function(app, multer, storage){
     })
 
     app.get('/researcher_timeline', function(req, res){
+        console.log(req.session)
         if(req.session.loggedin == true){
             if(req.session.privilege == 0){
                 let sql = "SELECT * FROM categories"
