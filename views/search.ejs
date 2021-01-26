@@ -1,15 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
-    <%- include('./partials/head.ejs') %>
+    <%- include('./partials/header.ejs') %>
 <body>
     <%- include('./partials/nav.ejs') %>
     <div class="container"> 
         <br>
         <div class="row text-center">
-            <div class="col-md-5"> </div>
+            <div class="col-md-3"> </div>
+            <div class="col-md-6"> 
             <% if (statistics.length > 0){ %>
-            </br><h4 class="row text-center">Popular Categories!!</h4>
-            <table class="table table-bordered">
+            <h4 class="p-2 mb-2 bg-secondary text-white">POPULAR CATEGORIES!!</h4>
+            <table id = "myTable" class="table table-bordered table-hover table-striped shadow-sm bg-white rounded">
                 <thead>
                     <tr>
                         <th>Category</th>
@@ -26,29 +27,44 @@
                 </tbody>
             </table>
             <% } %> 
+            </div>
+            <form action="/search" method="POST">
+                <div class="input-group">
+                    <input type="text" class="form-control" id="search" name="search" placeholder="Search Article">
+                    <div class="input-group-append">
+                      <button class="btn btn-primary" type="submit">
+                        <i class="fa fa-search"></i>
+                      </button>
+                    </div>
+                  </div>
+            </form>
         </div>
-        <form action="/search" method="POST">
-            <label for="search">Search Article:</label>
-            <input type="search" id="search" name="search">
-            <input type="submit">
-        </form>
         <hr>
         <% if (articles.length > 0){ %>
-             <h3 class="text-center"><%= search_title %></h3> 
-            <% articles.forEach(function(article){ %>   
-                <img src="<%= article.Image_Path %>" style="width:100%">
-                    <div>
-                      <h4 ><%= article.Title %></h4>
-                      <p > <%= article.Body.substr(0, 100) %></p>
-                      <a href="/article/<%=article.ID%>">Read More</a>
-                    </div>
-                    <div>By: <%= article.Name %></div>
-                    <div>By: <%= article.Created %></div>
+            <h3 class="text-center text-info"><%= search_title %></h3> 
+        <% articles.forEach(function(article, index){ %>  
+            <% if (index % 4 == 0){ %>
+              <div class="row"> 
+            <% } %>
+            <div class="col-md-3">
+              <br>
+                <div class="card-deck">
+                <div class="card border-info mb-3 shadow bg-white rounded" style="max-width: 18rem;">
+                    <div class="card-header text-secondary">By: <%= article.Name %></div>
+                  <img class="card-img-top" height="125rem" src="<%= article.Image_Path %>" alt="Card image cap">
+                  <div class="card-body text-dark">
+                    <h5 class="card-title text-info"><%= article.Title.substr(0,22) %></h5>
+                    <p class="card-text"><%= article.Body.substr(0, 100) %></p>
+                    <a href="/article/<%=article.ID%>" class="btn btn-primary btn-sm">Read More</a>
                   </div>
-                  <br>
-                  <br>
-          <%  }) %>
-        <% } %>
+                  <div class="card-footer text-secondary"><%= article.Created %></div>
+                    </div>
+                  </div>
+              </div>
+              <% if ((index+1) % 4 == 0){ %> </div>
+              <% } %>
+          <%  }) %> 
+          <% } %>
     </div>      
 </body>
 </html>

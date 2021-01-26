@@ -28,9 +28,6 @@ module.exports = function(app, multer, storage){
                 })
             })
         })
-        
-        
-        
     })
    
     app.get('/login', function(req, res) {

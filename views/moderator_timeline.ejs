@@ -3,10 +3,10 @@
     <%- include('./partials/header.ejs') %>
 
 <body>
-    <%- include('./partials/nav.ejs') %>
     <br>
     <div class="container">  
-      
+      <a href="/categories_insert" class="btn btn-success btn-sm">Insert</a>
+      <a href="/logout" class="btn btn-danger btn-sm">Logout</a>
             <% articles.forEach(function(article, index){ %>  
               <% if (index % 4 == 0){ %>
                 <div class="row"> 
