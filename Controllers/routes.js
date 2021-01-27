@@ -1,6 +1,7 @@
 const connection = require('./db')
 const helpers = require('./helpers')
 const bcrypt = require('bcryptjs')
+const { createPool } = require('mysql')
 
 module.exports = function(app, multer, storage){
 
@@ -16,7 +17,7 @@ module.exports = function(app, multer, storage){
     })
 
     app.post('/save', function(req, res){
-        
+        // Generate a salt and hash on separate function calls
         bcrypt.genSalt(10, function(err, salt){
             bcrypt.hash(req.body.password, salt, function(err, hash){
                 let data = {name: req.body.name, email: req.body.email, password: hash, specialization: req.body.specialization}
@@ -29,7 +30,7 @@ module.exports = function(app, multer, storage){
             })
         })
     })
-   
+
     app.get('/login', function(req, res) {
         if (req.session.loggedin == true){
             if(req.session.privilege == 0){
@@ -45,8 +46,11 @@ module.exports = function(app, multer, storage){
     app.post('/auth', function(req, res) {
         var email = req.body.email
         var password = req.body.password
+        //check to see if the username and password exist
         if (email && password) {
+            // check to see if the details exist in the table
             connection.query('SELECT * FROM researchers WHERE Email = ?', [email], function(error, results, fields) {
+                // If the result returned from the table exists, we create session variables
                 if (results.length > 0) {
                     let match = bcrypt.compareSync(password, results[0].Password)
                     if (match == true){
@@ -92,7 +96,6 @@ module.exports = function(app, multer, storage){
     })
 
     app.get('/researcher_timeline', function(req, res){
-        console.log(req.session)
         if(req.session.loggedin == true){
             if(req.session.privilege == 0){
                 let sql = "SELECT * FROM categories"
@@ -292,7 +295,6 @@ module.exports = function(app, multer, storage){
     app.get('/moderator_timeline', function(req, res){
         if(req.session.loggedin == true){
             if(req.session.privilege == 1){
-                const Id = req.body.ID
                 let sql = "SELECT * FROM categories"
                 let sql1 = `SELECT * FROM articles WHERE approved = 0`
                 connection.query(sql, function(err, results){
@@ -349,11 +351,12 @@ module.exports = function(app, multer, storage){
                         let sql3 = `SELECT * FROM followers WHERE Uid1 = ${req.session.uid} AND Uid2 = ${rids[0].ID}`
                         connection.query(sql3, function(err, follow){
                             if(err) throw err
+                            let not_owner_flag = (req.session.email !== Email)
                             let follow_flag = false
                             if(follow.length == 1){
                                 follow_flag = true
                             }
-                            res.render('public_profile', {categories: results, articles: rows, profile: rids[0], follow: follow_flag})
+                            res.render('public_profile', {categories: results, articles: rows, profile: rids[0], not_owner: not_owner_flag, follow: follow_flag})
                         })
                         
                     })
@@ -429,7 +432,7 @@ module.exports = function(app, multer, storage){
         if(req.session.loggedin){
             let sql = "SELECT * FROM categories"
             let sql1 = `SELECT articles.ID, articles.Title, articles.Body, articles.Image_Path, articles.Created, researchers.Name FROM articles JOIN researchers ON articles.Uid = researchers.ID WHERE articles.Cid = ${req.session.specialization}`
-            let sql2 = 'SELECT categories.Category_Name, COUNT(*) as Category_Count FROM articles JOIN categories ON articles.Cid = categories.ID GROUP BY cid'
+            let sql2 = 'SELECT categories.Category_Name, COUNT(*) as Category_Count FROM articles JOIN categories ON articles.Cid = categories.ID GROUP BY Cid'
             connection.query(sql, function(err, results){
                 connection.query(sql1, function(err, rows){
                     connection.query(sql2, function(err, stats){
@@ -437,7 +440,6 @@ module.exports = function(app, multer, storage){
                         let search_title = 'Suggestions'
                         res.render('search', {categories: results, articles: rows, search_title: search_title, statistics: stats})
                     })
-                    
                 })
             })
         } else {

@@ -1,3 +1,4 @@
+// need to include the packages in our Node.js application, therefore create the following variables and require the modules
 const express = require('express')
 const path = require('path')
 const ejs = require('ejs')
@@ -7,7 +8,7 @@ const session = require('express-session')
 const flash = require('connect-flash')
 const controller = require('./Controllers/routes')
 
-// express app
+// Express is what we'll use for our web applications, this includes packages such as sessions and handling HTTP requests etc
 const app = express()
 
 // set views file

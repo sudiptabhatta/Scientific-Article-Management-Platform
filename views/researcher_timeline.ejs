@@ -18,8 +18,8 @@
                   <div class="card border-info mb-3 shadow bg-white rounded" style="max-width: 18rem;">
                     <img class="card-img-top" height="125rem" src="<%= article.Image_Path %>" alt="Card image cap">
                     <div class="card-body text-dark">
-                      <h5 class="card-title text-info"><%= article.Title.substr(0,22) %></h5>
-                      <p class="card-text"><%= article.Body.substr(0, 100) %></p>
+                      <h5 class="card-title text-info"><%= article.Title.substr(0,20) %>..</h5>
+                      <p class="card-text"><%= article.Body.substr(0, 100) %>...</p>
                       <a href="/article/<%=article.ID%>" class="btn btn-primary btn-sm">Read More</a>
                     </div>
                     <div class="card-footer text-secondary"><%= article.Created %></div>
