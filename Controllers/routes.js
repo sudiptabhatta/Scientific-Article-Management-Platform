@@ -1,7 +1,6 @@
 const connection = require('./db')
 const helpers = require('./helpers')
 const bcrypt = require('bcryptjs')
-const { createPool } = require('mysql')
 
 module.exports = function(app, multer, storage){
 
@@ -277,15 +276,17 @@ module.exports = function(app, multer, storage){
 
     app.get('/category/:Id', function(req, res){
         if(req.session.loggedin){
-            const Id = req.params.Id
-            let sql = "SELECT * FROM categories"
-            let sql1 = `SELECT * FROM articles WHERE Cid = ${Id}`
-            connection.query(sql, function(err, results){
-                connection.query(sql1, function(err, rows){
-                    if(err) throw err
-                    res.render('researcher_timeline', {categories: results, articles: rows})
+            if(req.session.privilege == 0){
+                const Id = req.params.Id
+                let sql = "SELECT * FROM categories"
+                let sql1 = `SELECT * FROM articles WHERE Cid = ${Id}`
+                connection.query(sql, function(err, results){
+                    connection.query(sql1, function(err, rows){
+                        if(err) throw err
+                        res.render('researcher_timeline', {categories: results, articles: rows})
+                    })
                 })
-            })
+            }
         }  else{
             req.flash('msg','Please login to continue!')
             res.redirect('/login')
@@ -341,27 +342,29 @@ module.exports = function(app, multer, storage){
 
     app.get('/profile/:Email', function(req, res){
         if(req.session.loggedin){
-            const Email = req.params.Email
-            let sql = "SELECT * FROM categories"
-            let sql1 = `SELECT articles.ID, articles.Title, articles.Body, articles.Image_Path, articles.Created FROM articles JOIN researchers ON articles.Uid = researchers.ID WHERE researchers.Email = '${Email}'`
-            let sql2 = `SELECT ID, Name, Email FROM  researchers WHERE Email = '${Email}'`
-            connection.query(sql, function(err, results){
-                connection.query(sql1, function(err, rows){
-                    connection.query(sql2, function(err, rids){
-                        let sql3 = `SELECT * FROM followers WHERE Uid1 = ${req.session.uid} AND Uid2 = ${rids[0].ID}`
-                        connection.query(sql3, function(err, follow){
-                            if(err) throw err
-                            let not_owner_flag = (req.session.email !== Email)
-                            let follow_flag = false
-                            if(follow.length == 1){
-                                follow_flag = true
-                            }
-                            res.render('public_profile', {categories: results, articles: rows, profile: rids[0], not_owner: not_owner_flag, follow: follow_flag})
+            if(req.session.privilege == 0){
+                const Email = req.params.Email
+                let sql = "SELECT * FROM categories"
+                let sql1 = `SELECT articles.ID, articles.Title, articles.Body, articles.Image_Path, articles.Created FROM articles JOIN researchers ON articles.Uid = researchers.ID WHERE researchers.Email = '${Email}'`
+                let sql2 = `SELECT ID, Name, Email FROM  researchers WHERE Email = '${Email}'`
+                connection.query(sql, function(err, results){
+                    connection.query(sql1, function(err, rows){
+                        connection.query(sql2, function(err, rids){
+                            let sql3 = `SELECT * FROM followers WHERE Uid1 = ${req.session.uid} AND Uid2 = ${rids[0].ID}`
+                            connection.query(sql3, function(err, follow){
+                                if(err) throw err
+                                let not_owner_flag = (req.session.email !== Email)
+                                let follow_flag = false
+                                if(follow.length == 1){
+                                    follow_flag = true
+                                }
+                                res.render('public_profile', {categories: results, articles: rows, profile: rids[0], not_owner: not_owner_flag, follow: follow_flag})
+                            })
+                            
                         })
-                        
                     })
                 })
-            })
+            }
         } else {
             req.flash('msg', 'Please login to view this page!')
             res.redirect('/login')
@@ -409,18 +412,20 @@ module.exports = function(app, multer, storage){
 
     app.get('/follows/:Email', function(req, res){
         if(req.session.loggedin){
-            let Email = req.params.Email
-            let sql = "SELECT * FROM categories"
-            let sql1 = `SELECT Name FROM researchers WHERE ID IN(SELECT Uid2 FROM followers WHERE Uid1 = (SELECT ID FROM researchers WHERE Email = '${Email}'))`
-            let sql2 = `SELECT Name FROM researchers WHERE ID IN(SELECT Uid1 FROM followers WHERE Uid2 = (SELECT ID FROM researchers WHERE Email = '${Email}'))`
-            connection.query(sql, function(err, results){
-                connection.query(sql1, function(err, rows){
-                    connection.query(sql2, function(err, tuples){
-                     if(err) throw err
-                     res.render('myFollows', {categories: results, following: rows, followers: tuples})
+            if(req.session.privilege == 0){
+                let Email = req.params.Email
+                let sql = "SELECT * FROM categories"
+                let sql1 = `SELECT Name FROM researchers WHERE ID IN(SELECT Uid2 FROM followers WHERE Uid1 = (SELECT ID FROM researchers WHERE Email = '${Email}'))`
+                let sql2 = `SELECT Name FROM researchers WHERE ID IN(SELECT Uid1 FROM followers WHERE Uid2 = (SELECT ID FROM researchers WHERE Email = '${Email}'))`
+                connection.query(sql, function(err, results){
+                    connection.query(sql1, function(err, rows){
+                        connection.query(sql2, function(err, tuples){
+                         if(err) throw err
+                         res.render('myFollows', {categories: results, following: rows, followers: tuples})
+                        })
                     })
                 })
-            })
+            }
         } else {
             req.flash('msg', 'Please login to view this page!')
             
@@ -430,18 +435,20 @@ module.exports = function(app, multer, storage){
 
     app.get('/search', function(req, res){
         if(req.session.loggedin){
-            let sql = "SELECT * FROM categories"
-            let sql1 = `SELECT articles.ID, articles.Title, articles.Body, articles.Image_Path, articles.Created, researchers.Name FROM articles JOIN researchers ON articles.Uid = researchers.ID WHERE articles.Cid = ${req.session.specialization}`
-            let sql2 = 'SELECT categories.Category_Name, COUNT(*) as Category_Count FROM articles JOIN categories ON articles.Cid = categories.ID GROUP BY Cid'
-            connection.query(sql, function(err, results){
-                connection.query(sql1, function(err, rows){
-                    connection.query(sql2, function(err, stats){
-                        if(err) throw err
-                        let search_title = 'Suggestions'
-                        res.render('search', {categories: results, articles: rows, search_title: search_title, statistics: stats})
+            if(req.session.privilege == 0){
+                let sql = "SELECT * FROM categories"
+                let sql1 = `SELECT articles.ID, articles.Title, articles.Body, articles.Image_Path, articles.Created, researchers.Name FROM articles JOIN researchers ON articles.Uid = researchers.ID WHERE articles.Cid = ${req.session.specialization}`
+                let sql2 = 'SELECT categories.Category_Name, COUNT(*) as Category_Count FROM articles JOIN categories ON articles.Cid = categories.ID GROUP BY Cid'
+                connection.query(sql, function(err, results){
+                    connection.query(sql1, function(err, rows){
+                        connection.query(sql2, function(err, stats){
+                            if(err) throw err
+                            let search_title = 'Suggestions'
+                            res.render('search', {categories: results, articles: rows, search_title: search_title, statistics: stats})
+                        })
                     })
                 })
-            })
+            }
         } else {
             req.flash('msg', 'Please login to view this page!')
             res.redirect('/login')
