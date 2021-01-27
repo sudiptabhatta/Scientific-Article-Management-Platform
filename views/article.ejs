@@ -36,13 +36,11 @@
                 <div class="card text-info border mb-3 shadow bg-white rounded" alt="Card image" style="width:600px">
                     <div class="card-body text-dark">
                         <h4 class="text-secondary">COMMENT POSTED</h4>
-                    <% if(owner == true) { %>
                         <form action="/comment_submit" method="POST">
                             <input type="hidden" value="<%= article.ID %>" name="ID">
                             <textarea rows="4" cols="50" id = "comment" name = "comment" placeholder="Write a comment..."></textarea> </br>
                             <button type="submit" class="btn btn-primary btn-sm"> Comment </button>
                         </form>
-                    <% } %>
                     <% comments.forEach(function(comment){ %>
                         <div>
                             <hr>
