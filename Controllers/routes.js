@@ -60,7 +60,6 @@ module.exports = function(app, multer, storage){
                         req.session.privilege = results[0].privilege
                         req.session.specialization = results[0].Specialization
                         if (req.session.privilege == 0){
-                            console.log('here', req.session)
                             res.redirect('/researcher_timeline')
                         }
                         else{
@@ -98,7 +97,7 @@ module.exports = function(app, multer, storage){
         if(req.session.loggedin == true){
             if(req.session.privilege == 0){
                 let sql = "SELECT * FROM categories"
-                let sql1 = `SELECT * FROM articles WHERE Uid = ${req.session.uid}`
+                let sql1 = `SELECT * FROM articles WHERE Uid = ${req.session.uid} AND approved = 1`
                 connection.query(sql, function(err, results){
                     connection.query(sql1, function(err, rows){
                         if(err) throw err
@@ -345,7 +344,7 @@ module.exports = function(app, multer, storage){
             if(req.session.privilege == 0){
                 const Email = req.params.Email
                 let sql = "SELECT * FROM categories"
-                let sql1 = `SELECT articles.ID, articles.Title, articles.Body, articles.Image_Path, articles.Created FROM articles JOIN researchers ON articles.Uid = researchers.ID WHERE researchers.Email = '${Email}'`
+                let sql1 = `SELECT articles.ID, articles.Title, articles.Body, articles.Image_Path, articles.Created FROM articles JOIN researchers ON articles.Uid = researchers.ID WHERE researchers.Email = '${Email}' AND articles.approved = 1`
                 let sql2 = `SELECT ID, Name, Email FROM  researchers WHERE Email = '${Email}'`
                 connection.query(sql, function(err, results){
                     connection.query(sql1, function(err, rows){
@@ -437,7 +436,7 @@ module.exports = function(app, multer, storage){
         if(req.session.loggedin){
             if(req.session.privilege == 0){
                 let sql = "SELECT * FROM categories"
-                let sql1 = `SELECT articles.ID, articles.Title, articles.Body, articles.Image_Path, articles.Created, researchers.Name FROM articles JOIN researchers ON articles.Uid = researchers.ID WHERE articles.Cid = ${req.session.specialization}`
+                let sql1 = `SELECT articles.ID, articles.Title, articles.Body, articles.Image_Path, articles.Created, researchers.Name FROM articles JOIN researchers ON articles.Uid = researchers.ID WHERE articles.Cid = ${req.session.specialization} AND approved = 1`
                 let sql2 = 'SELECT categories.Category_Name, COUNT(*) as Category_Count FROM articles JOIN categories ON articles.Cid = categories.ID GROUP BY Cid'
                 connection.query(sql, function(err, results){
                     connection.query(sql1, function(err, rows){
