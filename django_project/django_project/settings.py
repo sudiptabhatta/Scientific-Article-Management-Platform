@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    "blog.apps.BlogConfig",
     "users.apps.UsersConfig",
     "django.contrib.admin",
     "crispy_forms",
@@ -124,3 +125,6 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
+LOGIN_REDIRECT_URL = 'researcher-profile'  # it will be newsfeed later after creating the newsfeed files.
+LOGIN_URL = 'login'
