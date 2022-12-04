@@ -13,8 +13,7 @@
     <link rel="stylesheet" type="text/css" href="{% static 'users/main.css' %}">
 </head>
 <body>
-    <header class="site-header">
-      <nav class="navbar navbar-expand-md navbar-dark bg-steel fixed-top" style="background-color: #435f74;">
+      <nav class="navbar navbar-expand-md navbar-dark bg-steel" style="background-color: #435f74;">
         <div class="container">
             <a class="navbar-brand" href="{% url 'home' %}"><img src="/static/users/logo.png" style="height: 30px; width: 150px;"> </a>
           <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggle" aria-controls="navbarToggle" aria-expanded="false" aria-label="Toggle navigation">
@@ -48,9 +47,9 @@
           </div>
         </div>
       </nav>
-    </header>
+    <br><br>
     
-    <main role="main" class="container">
+    <div class="container">
       {% block additional_styles %}
       {% endblock %}
         <div class="row">
@@ -68,7 +67,7 @@
           
           <div class="col-md-2"></div>
         </div>
-    </main>
+      </div>
 
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->

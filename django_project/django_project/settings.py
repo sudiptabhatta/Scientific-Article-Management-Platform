@@ -32,7 +32,8 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     "blog.apps.BlogConfig",
-    "users.apps.UsersConfig",
+    # "users.apps.UsersConfig",
+    "users",
     "django.contrib.admin",
     "crispy_forms",
     "django.contrib.auth",
@@ -128,3 +129,6 @@ CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 LOGIN_REDIRECT_URL = 'researcher-profile'  # it will be newsfeed later after creating the newsfeed files.
 LOGIN_URL = 'login'
+
+
+AUTH_USER_MODEL = 'users.CustomUser'
