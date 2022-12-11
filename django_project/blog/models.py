@@ -13,6 +13,7 @@ class Category(models.Model):
 
 class Post(models.Model):
     aid = models.AutoField(primary_key=True)
+    image = models.ImageField(null=True, blank=True, default='blog-default.png', upload_to='images/')
     title = models.CharField(max_length=200)
     content = models.TextField()
     created = models.DateTimeField(default=timezone.now)

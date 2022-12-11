@@ -130,5 +130,7 @@ CRISPY_TEMPLATE_PACK = 'bootstrap4'
 LOGIN_REDIRECT_URL = 'researcher-profile'  # it will be newsfeed later after creating the newsfeed files.
 LOGIN_URL = 'login'
 
+MEDIA_ROOT = Path(BASE_DIR,  'media')
+MEDIA_URL = '/media/'
 
 AUTH_USER_MODEL = 'users.CustomUser'
