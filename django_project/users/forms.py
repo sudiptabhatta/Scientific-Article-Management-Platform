@@ -9,8 +9,8 @@ class UserRegisterForm(UserCreationForm):
     email = forms.EmailField()
 
     categories = Category.objects.all()
-    cid = forms.ModelChoiceField(queryset=categories)
+    specialization = forms.ModelChoiceField(queryset=categories)
 
     class Meta:
         model = User
-        fields = ['username', 'email', 'password1', 'password2', 'cid']
+        fields = ['username', 'email', 'password1', 'password2', 'specialization']
