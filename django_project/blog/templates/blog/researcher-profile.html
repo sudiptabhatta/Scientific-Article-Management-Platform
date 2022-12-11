@@ -6,9 +6,12 @@
         <div class="card-body">
             <h5 class="card-title">{{ post.title|truncatechars:70 }}</h5>
             <p class="card-text">{{ post.content|truncatechars:200 }}</p>
-            <a href="" class="btn btn-primary"> See Details </a>
+            <a href="{% url 'post-detail' post.aid %}" class="btn btn-primary"> See Details </a>
         </div>
-        <div class="card-footer text-secondary">{{ post.created|date:"F d, Y" }}</div> 
+        <div class="card-footer text-secondary">
+            <a class="mr-2" href="{% url 'researcher-profile' %}">{{ post.author }}</a>|| 
+            {{ post.created|date:"F d, Y" }}
+        </div> 
     </div>
 {% endfor %}
 {% endblock content %}

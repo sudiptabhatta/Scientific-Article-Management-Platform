@@ -1,0 +1,14 @@
+{% extends 'users/base.html' %}
+{% block content %}
+    <div class="card mb-3">
+        <img class="card-img-top" src="{{ object.image.url }}" alt="Card image cap">
+        <div class="card-body">
+            <h5 class="card-title">{{ object.title }}</h5>
+            <p class="card-text">{{ object.content}}</p>
+        </div>
+        <div class="card-footer text-secondary">
+            <a class="mr-2" href="{% url 'researcher-profile' %}">{{ object.author }}</a>|| 
+            {{ object.created|date:"F d, Y" }}
+        </div> 
+    </div>
+{% endblock content %}

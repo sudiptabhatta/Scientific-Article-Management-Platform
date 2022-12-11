@@ -17,7 +17,7 @@ from django.contrib import admin
 from django.urls import path
 from users import views as user_views
 from django.contrib.auth import views as auth_views
-from blog.views import UserPostListView
+from blog.views import UserPostListView, UserPostDetailView
 from django.conf import settings
 from django.conf.urls.static import static
 
@@ -28,6 +28,7 @@ urlpatterns = [
     path('login/', auth_views.LoginView.as_view(template_name = 'users/login.html'), name='login'),
     path('logout/', user_views.logout_request, name='logout'),
     path('profile/', UserPostListView.as_view(), name='researcher-profile'),
+    path('post/<int:pk>/', UserPostDetailView.as_view(), name='post-detail'),
 ]
 
 if settings.DEBUG:
