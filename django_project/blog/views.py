@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from .models import Post
-from django.views.generic import ListView, DetailView
+from django.views.generic import ListView, DetailView, CreateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 # get all posts of the logged in user
@@ -17,3 +17,14 @@ class UserPostListView(LoginRequiredMixin, ListView):
 # see details of a post create by a user
 class UserPostDetailView(LoginRequiredMixin, DetailView):
     model = Post
+
+
+
+# create post
+class UserPostCreateView(LoginRequiredMixin, CreateView):
+    model = Post
+    fields = ['title', 'content', 'image', 'cid']
+
+    def form_valid(self, form):
+        form.instance.author = self.request.user
+        return super().form_valid(form)
