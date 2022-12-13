@@ -12,7 +12,15 @@ class UserPostListView(LoginRequiredMixin, ListView):
     ordering = ['-created']
 
     def get_queryset(self):
+        # return Post.objects.filter(author = self.request.user, approved=True) 
         return Post.objects.filter(author = self.request.user)
+
+    
+# view posts of a category
+def categoryView(request, cats):
+    category_posts = Post.objects.filter(cid=cats)
+    return render(request, 'blog/category.html', {'category_posts': category_posts})
+
 
 
 # see details of a post create by a user

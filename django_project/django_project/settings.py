@@ -128,7 +128,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
-LOGIN_REDIRECT_URL = 'researcher-profile'  # it will be newsfeed later after creating the newsfeed files.
+LOGIN_REDIRECT_URL = 'researcher-profile'
 LOGIN_URL = 'login'
 
 MEDIA_ROOT = Path(BASE_DIR,  'media')

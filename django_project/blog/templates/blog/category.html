@@ -1,0 +1,23 @@
+{% extends 'users/base.html' %}
+{% block content %}
+{% if category_posts %}
+{% for category_post in category_posts %}
+{% if category_post.approved %}
+    <div class="card mb-3">
+        <img class="card-img-top" src="{{ category_post.image.url }}" alt="Card image cap">
+        <div class="card-body">
+            <h5 class="card-title">{{ category_post.title|truncatechars:70 }}</h5>
+            <p class="card-text">{{ category_post.content|truncatechars:200|safe }}</p>
+            <a href="{% url 'post-detail' category_post.aid %}" class="btn btn-primary"> See Details </a>
+        </div>
+        <div class="card-footer text-secondary">
+            <a class="mr-2" href="{% url 'researcher-profile' %}">{{ category_post.author }}</a>|| 
+            {{ category_post.created|date:"F d, Y" }}
+        </div> 
+    </div>
+{% endif %}
+{% endfor %}
+{% else %}
+    <h2>Sorry, this category does not exist</h2>
+{% endif %}
+{% endblock content %}
