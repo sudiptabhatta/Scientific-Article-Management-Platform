@@ -22,6 +22,7 @@ class Post(models.Model):
     created = models.DateTimeField(default=timezone.now)
     author = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
     cid = models.ForeignKey(Category, on_delete=models.CASCADE, verbose_name='specialization') 
+    approved = models.BooleanField('Approved', default=False)
 
     def __str__(self):
         return self.title

@@ -1,6 +1,7 @@
 {% extends 'users/base.html' %}
 {% block content %}
 {% for post in posts %}
+{% if post.approved %}
     <div class="card mb-3">
         <img class="card-img-top" src="{{ post.image.url }}" alt="Card image cap">
         <div class="card-body">
@@ -13,5 +14,6 @@
             {{ post.created|date:"F d, Y" }}
         </div> 
     </div>
+{% endif %}
 {% endfor %}
 {% endblock content %}
