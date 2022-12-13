@@ -1,7 +1,8 @@
 from django.shortcuts import render
 from .models import Post
-from django.views.generic import ListView, DetailView, CreateView
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from .forms import PostForm, EditForm
 
 # get all posts of the logged in user
 class UserPostListView(LoginRequiredMixin, ListView):
@@ -23,8 +24,44 @@ class UserPostDetailView(LoginRequiredMixin, DetailView):
 # create post
 class UserPostCreateView(LoginRequiredMixin, CreateView):
     model = Post
-    fields = ['title', 'content', 'image', 'cid']
+    form_class = PostForm
+    template_name = 'blog/post_create.html'
+    # fields = ['title', 'content', 'image', 'cid']
 
     def form_valid(self, form):
         form.instance.author = self.request.user
         return super().form_valid(form)
+
+
+
+# update post
+class UserPostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Post
+    form_class = EditForm
+    template_name = 'blog/post_update.html'
+    # fields = ['title', 'content', 'image', 'cid']
+
+    def form_valid(self, form):
+        form.instance.author = self.request.user
+        return super().form_valid(form)
+
+
+    # UserPassesTestMixin will run this function
+    def test_func(self):
+        post = self.get_object() # the post that the user wants to update
+        if self.request.user == post.author: # check if the logged in user is the author of the post that he/she wants to uodate
+            return True
+        return False
+
+
+
+# delete post
+class UserPostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    model = Post
+    success_url = '/profile/'
+
+    def test_func(self):
+        post = self.get_object() 
+        if self.request.user == post.author:
+            return True
+        return False

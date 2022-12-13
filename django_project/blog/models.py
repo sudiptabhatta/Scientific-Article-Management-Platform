@@ -2,6 +2,7 @@ from django.db import models
 from django.utils import timezone
 from django.contrib.auth import get_user_model
 from django.urls import reverse
+from ckeditor.fields import RichTextField # first I installed ckeditor by this command: pip install django-ckeditor
 
 # Create your models here.
 class Category(models.Model):
@@ -14,12 +15,13 @@ class Category(models.Model):
 
 class Post(models.Model):
     aid = models.AutoField(primary_key=True)
-    image = models.ImageField(null=True, blank=True, default='blog-default.png', upload_to='images/')
+    image = models.ImageField(default='blog-default.png', upload_to='images/')
     title = models.CharField(max_length=200)
-    content = models.TextField()
+    # content = models.TextField()
+    content = RichTextField()
     created = models.DateTimeField(default=timezone.now)
     author = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
-    cid = models.ForeignKey(Category, on_delete=models.CASCADE) 
+    cid = models.ForeignKey(Category, on_delete=models.CASCADE, verbose_name='specialization') 
 
     def __str__(self):
         return self.title
