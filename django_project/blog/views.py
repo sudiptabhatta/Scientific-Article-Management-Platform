@@ -1,8 +1,9 @@
 from django.shortcuts import render
-from .models import Post, Category
+from .models import Post, Comment
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from .forms import PostForm, EditForm
+from .forms import PostForm, EditForm, CommentForm
+from django.urls import reverse_lazy
 
 # get all posts of the logged in user
 class UserPostListView(LoginRequiredMixin, ListView):
@@ -11,6 +12,7 @@ class UserPostListView(LoginRequiredMixin, ListView):
     context_object_name = 'posts' # if I don't set context_object_name here, it will be object_list to iterate through the list of posts in the html page.
     ordering = ['-created']
 
+    # return the list of items for this view
     def get_queryset(self):
         # return Post.objects.filter(author = self.request.user, approved=True) 
         return Post.objects.filter(author = self.request.user)
@@ -27,6 +29,24 @@ def categoryView(request, cats):
 class UserPostDetailView(LoginRequiredMixin, DetailView):
     model = Post
 
+    # comment section implementation 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # retrieve all comments of a specific post and store them in a local variable comments_connected
+        comments_connected = Comment.objects.filter(aid=self.get_object()).order_by('-created')
+        # send the comments_connected as a context to the post detail
+        context['comments'] = comments_connected
+        if self.request.user.is_authenticated:
+            context['comment_form'] = CommentForm(instance=self.request.user)
+        return context
+
+    # define a post method to receive the context from our form in order to directly post comments from the post-detail page
+    def post(self, request, *args, **kwargs):
+        new_comment = Comment(comment=request.POST.get('comment'),
+                                author=self.request.user,
+                                aid=self.get_object())
+        new_comment.save()
+        return self.get(self, request, *args, **kwargs) 
 
 
 # create post
@@ -36,6 +56,7 @@ class UserPostCreateView(LoginRequiredMixin, CreateView):
     template_name = 'blog/post_create.html'
     # fields = ['title', 'content', 'image', 'cid']
 
+    # if the form is valid, save the associated model
     def form_valid(self, form):
         form.instance.author = self.request.user
         return super().form_valid(form)

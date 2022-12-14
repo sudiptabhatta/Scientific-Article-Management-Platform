@@ -18,4 +18,33 @@
             {{ object.created|date:"F d, Y" }}
         </div> 
     </div>
+    <div class="card text-info border mb-3 shadow bg-white rounded" alt="Card image" style="width:730px">
+        <div class="card-body text-dark">
+            <h2>Leave your comment!</h2>
+            <form action="" method="POST">
+                {% csrf_token %}
+                <div class="form-group">
+                    {{ comment_form }}
+                </div>
+                <button type="submit" class="btn btn-primary btn-sm"> Comment </button>
+            </form>
+            <div>
+                <br/><br/>
+                {% if not object.comments.all %}
+                <hr>
+                <h6> No comment yet </h6>
+                {% else %}
+                <h4 class="text-secondary">{{ object.numberOfComments }} Comment{{ object.numberOfComments|pluralize }} </h4> <!-- Add a 's' at the end of the number, if the number is not 1 -->
+                <hr>
+                {% for comment in object.comments.all %}
+                <h5> {{ comment.author }} </h5>
+                <h7> {{ comment.comment }} </h7> <br>
+                <h9 class="text-secondary"> {{ comment.created }} </h9>
+                <hr>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    
 {% endblock content %}

@@ -31,5 +31,19 @@ class Post(models.Model):
     def get_absolute_url(self):
         return reverse('post-detail', kwargs={'pk':self.pk})
 
+    @property
+    def numberOfComments(self):
+        return Comment.objects.filter(aid=self).count()
 
-    
+
+
+class Comment(models.Model):
+    commentid = models.AutoField(primary_key=True)
+    author = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+    aid = models.ForeignKey(Post, related_name='comments', on_delete=models.CASCADE)
+    comment = models.TextField()
+    created = models.DateTimeField(auto_now_add=True)
+
+
+    def __str__(self):
+        return '%s - %s' % (self.aid.title, self.author.username)
