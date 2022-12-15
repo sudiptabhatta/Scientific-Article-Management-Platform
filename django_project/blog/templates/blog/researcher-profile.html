@@ -1,5 +1,16 @@
 {% extends 'users/base.html' %}
 {% block content %}
+<div class="content-section">
+    <div class="media">
+      <img class="rounded-circle account-img" src="{{ user.profile_pic.url }}" width="125" height="125">
+      <div class="media-body">
+        <h2 class="account-heading" style="margin-left: 30px">{{ user.username }}</h2>
+        <p class="text-secondary" style="margin-left: 30px">{{ user.email }}</p>
+        <a href="{% url 'user-update' %}" class="btn btn-secondary btn-sm" style="margin-left: 30px;"> Edit Profile </a>
+      </div>
+    </div>
+    <!-- FORM HERE -->
+</div>
 {% for post in posts %}
 {% if post.approved %}
     <div class="card mb-3">

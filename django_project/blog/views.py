@@ -3,7 +3,6 @@ from .models import Post, Comment
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from .forms import PostForm, EditForm, CommentForm
-from django.urls import reverse_lazy
 
 # get all posts of the logged in user
 class UserPostListView(LoginRequiredMixin, ListView):
@@ -47,6 +46,8 @@ class UserPostDetailView(LoginRequiredMixin, DetailView):
                                 aid=self.get_object())
         new_comment.save()
         return self.get(self, request, *args, **kwargs) 
+
+
 
 
 # create post

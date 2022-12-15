@@ -33,6 +33,7 @@ urlpatterns = [
     path('post/<int:pk>/edit/', UserPostUpdateView.as_view(), name='post-update'),
     path('post/<int:pk>/delete/', UserPostDeleteView.as_view(), name='post-delete'),
     path('category/<int:cats>/', categoryView, name='category'),
+    path('user/edit/', user_views.userInfoUpdate, name='user-update'),
 ]
 
 if settings.DEBUG:

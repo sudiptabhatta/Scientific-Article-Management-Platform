@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .forms import UserRegisterForm
+from .forms import UserRegisterForm, UserUpdateForm
 from django.contrib import messages
 from django.contrib.auth import logout
 
@@ -26,3 +26,24 @@ def logout_request(request):
     logout(request) 
     messages.info(request, f'You have successfully logged out.')
     return redirect('login')
+
+
+
+# user information update
+def userInfoUpdate(request):
+    if request.method == 'POST':
+        u_form = UserUpdateForm(request.POST, request.FILES, instance=request.user)
+        if u_form.is_valid():
+            u_form.save()
+            messages.success(request, f'Your account has been updated!')
+            return redirect('researcher-profile')
+
+    else:
+        u_form = UserUpdateForm(instance=request.user)
+
+    context = {
+        'u_form': u_form
+    }
+
+    return render(request, 'users/user_update.html', context)
+

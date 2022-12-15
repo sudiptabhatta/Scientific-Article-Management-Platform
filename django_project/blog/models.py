@@ -31,7 +31,8 @@ class Post(models.Model):
     def get_absolute_url(self):
         return reverse('post-detail', kwargs={'pk':self.pk})
 
-    @property
+    # number of comments of a current post
+    @property # this method will be treated as a field
     def numberOfComments(self):
         return Comment.objects.filter(aid=self).count()
 
