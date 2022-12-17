@@ -1,6 +1,6 @@
 from django import forms
-from django.contrib.auth import get_user_model
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth import get_user_model # I changed the default User model. So I need to change the way I access it The right way to use it is get_user_model()
+from django.contrib.auth.forms import UserCreationForm # it is used to create a new user
 from blog.models import Category
 
 User = get_user_model()

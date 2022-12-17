@@ -11,7 +11,7 @@
             <a href="{% url 'post-detail' category_post.aid %}" class="btn btn-primary"> See Details </a>
         </div>
         <div class="card-footer text-secondary">
-            <a class="mr-2" href="{% url 'researcher-profile' %}">{{ category_post.author }}</a>|| 
+            <a class="mr-2" href="{% url 'other-people-profile' category_post.author.username %}">{{ category_post.author }}</a>|| 
             {{ category_post.created|date:"F d, Y" }}
         </div> 
     </div>

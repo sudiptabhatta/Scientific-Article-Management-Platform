@@ -17,7 +17,16 @@ from django.contrib import admin
 from django.urls import path
 from users import views as user_views
 from django.contrib.auth import views as auth_views
-from blog.views import UserPostListView, UserPostDetailView, UserPostCreateView, UserPostUpdateView, UserPostDeleteView, categoryView
+from blog.views import (
+    UserPostListView, 
+    UserPostDetailView, 
+    UserPostCreateView, 
+    UserPostUpdateView, 
+    UserPostDeleteView, 
+    categoryView, 
+    OtherPeopleProfileView
+)
+
 from django.conf import settings
 from django.conf.urls.static import static
 
@@ -34,6 +43,7 @@ urlpatterns = [
     path('post/<int:pk>/delete/', UserPostDeleteView.as_view(), name='post-delete'),
     path('category/<int:cats>/', categoryView, name='category'),
     path('user/edit/', user_views.userInfoUpdate, name='user-update'),
+    path('profile/<str:username>/', OtherPeopleProfileView.as_view(), name='other-people-profile'),
 ]
 
 if settings.DEBUG:

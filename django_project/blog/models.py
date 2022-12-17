@@ -21,7 +21,7 @@ class Post(models.Model):
     content = RichTextField()
     created = models.DateTimeField(default=timezone.now)
     author = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
-    cid = models.ForeignKey(Category, on_delete=models.CASCADE, verbose_name='specialization') 
+    cid = models.ForeignKey(Category, on_delete=models.CASCADE, verbose_name='specialization') # verbose_name is a human-readable name for the field. If the verbose name isn't given, Django will automatically create it using the field's attribute name. This attribute in general changes the field name in admin interface.
     approved = models.BooleanField('Approved', default=False)
 
     def __str__(self):

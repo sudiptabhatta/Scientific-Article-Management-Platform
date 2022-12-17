@@ -6,7 +6,7 @@
             <h5 class="card-title">{{ object.title }}</h5>
             <p class="card-text">{{ object.content|safe }}</p>
             <p class="card-text"> <b> Specialization: </b> {{ object.cid }} </p>
-            {% if object.author == user %}
+            {% if object.author == user %} 
             <div>
                 <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{% url 'post-update' object.aid %}">Edit</a>
                 <a class="btn btn-danger btn-sm mt-1 mb-1" href="{% url 'post-delete' object.aid %}">Delete</a>
@@ -14,7 +14,7 @@
             {% endif %}
         </div>
         <div class="card-footer text-secondary">
-            <a class="mr-2" href="{% url 'researcher-profile' %}">{{ object.author }}</a>|| 
+            <a class="mr-2" href="{% url 'other-people-profile' object.author.username %}">{{ object.author }}</a>|| 
             {{ object.created|date:"F d, Y" }}
         </div> 
     </div>

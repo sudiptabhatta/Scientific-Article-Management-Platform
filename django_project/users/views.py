@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from .forms import UserRegisterForm, UserUpdateForm
 from django.contrib import messages
 from django.contrib.auth import logout
+from blog.models import Category
 
 # Create your views here.
 def home(request):
@@ -10,14 +11,14 @@ def home(request):
 
 def register(request):
     if request.method == 'POST':
-        form = UserRegisterForm(request.POST)
+        form = UserRegisterForm(request.POST) # post request is gonna contain data in the message body and validate that form data
         if form.is_valid():
             form.save()
             username = form.cleaned_data.get('username')
             messages.success(request, f'Account created for {username}. You are now able to log in.')
             return redirect('login')
     else:
-        form = UserRegisterForm()
+        form = UserRegisterForm() # display a blank form
     return render(request, 'users/register.html', {'form': form})
 
 
@@ -42,7 +43,8 @@ def userInfoUpdate(request):
         u_form = UserUpdateForm(instance=request.user)
 
     context = {
-        'u_form': u_form
+        'u_form': u_form,
+        'cat_menu': Category.objects.all()
     }
 
     return render(request, 'users/user_update.html', context)

@@ -2,11 +2,13 @@
 {% block content %}
 <div class="content-section">
     <div class="media">
-      <img class="rounded-circle account-img" src="{{ user.profile_pic.url }}" width="125" height="125">
+      <img class="rounded-circle account-img" src="{{ cur_profile.profile_pic.url }}" width="125" height="125">
       <div class="media-body">
-        <h2 class="account-heading" style="margin-left: 30px">{{ user.username }}</h2>
-        <p class="text-secondary" style="margin-left: 30px">{{ user.email }}</p>
-        <a href="{% url 'user-update' %}" class="btn btn-secondary btn-sm" style="margin-left: 30px;"> Edit Profile </a>
+        <h2 class="account-heading" style="margin-left: 30px">{{ view.kwargs.username }}</h2>
+        <p class="text-secondary" style="margin-left: 30px">{{ cur_profile.email }}</p>
+        {% if user.username == cur_profile.username %}
+            <a href="{% url 'user-update' %}" class="btn btn-secondary btn-sm" style="margin-left: 30px;"> Edit Profile </a>
+        {% endif %}
       </div>
     </div>
 </div>
