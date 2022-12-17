@@ -4,10 +4,8 @@ from django.views.generic import ListView, DetailView, CreateView, UpdateView, D
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from .forms import PostForm, EditForm, CommentForm
 from django.contrib.auth import get_user_model
-
-from itertools import chain
-from django.http import HttpResponse
-from django.core import serializers
+from django.http import HttpResponseRedirect
+from django.urls import reverse
 
 User = get_user_model()
 
@@ -73,6 +71,12 @@ class UserPostDetailView(LoginRequiredMixin, DetailView):
         context['comments'] = comments_connected
         if self.request.user.is_authenticated:
             context['comment_form'] = CommentForm(instance=self.request.user)
+        # # likes_connected = get_object_or_404(Post, aid=self.kwargs['pk']) # grab the post of the given pk
+        likes_connected = Post.objects.get(aid=self.kwargs['pk']) 
+        liked = False
+        if likes_connected.like.filter(id=self.request.user.id).exists():
+            liked = True
+        context['post_is_liked'] = liked
         return context
 
 
@@ -153,4 +157,20 @@ class UserPostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         context = super(UserPostDeleteView, self).get_context_data(*args, **kwargs)
         context['cat_menu'] = cat_menu
         return context
+
+
+# post like view
+def PostLikeView(request, pk):
+    post = Post.objects.get(aid=pk) 
+    liked = False
+    # if like from user x exists, then remove like from current post, else, add like from user x to current post
+    if post.like.filter(id=request.user.id).exists():
+        post.like.remove(request.user)
+        liked = False
+    else:
+        post.like.add(request.user)
+        liked = True
+    # redirect the user to the same post page
+    url = reverse('post-detail', kwargs={'pk': pk})
+    return HttpResponseRedirect(url)
     
