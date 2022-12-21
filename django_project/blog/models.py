@@ -6,7 +6,7 @@ from ckeditor.fields import RichTextField # first I installed ckeditor by this c
 
 # Create your models here.
 class Category(models.Model):
-    cid = models.AutoField(primary_key=True, blank=True) 
+    cid = models.AutoField(primary_key=True) 
     category_name = models.CharField(max_length=100)
 
     def __str__(self):
@@ -23,7 +23,7 @@ class Post(models.Model):
     author = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
     cid = models.ForeignKey(Category, on_delete=models.CASCADE, verbose_name='specialization') # verbose_name is a human-readable name for the field. If the verbose name isn't given, Django will automatically create it using the field's attribute name. This attribute in general changes the field name in admin interface.
     approved = models.BooleanField('Approved', default=False)
-    like = models.ManyToManyField(get_user_model(), related_name='likes')
+    like = models.ManyToManyField(get_user_model(), related_name='likes', blank=True)
 
     def __str__(self):
         return self.title

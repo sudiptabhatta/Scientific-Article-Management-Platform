@@ -1,0 +1,61 @@
+{% extends 'users/base.html' %}
+{% block content %}
+<div class="container">
+    <br>
+    <div class="row text-center">
+        <div class="col-md-3"> </div>
+        <div class="col-md-6">
+                <h4 class="p-2 mb-2 bg-secondary text-white">POPULAR CATEGORIES!!</h4>
+                <table id="myTable" class="table table-bordered table-hover table-striped shadow-sm bg-white rounded">
+                    <thead>
+                        <tr>
+                            <th>Category</th>
+                            <th>Articles Available</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for stat in statistics %}
+                            <tr>
+                                <td>
+                                    {{ stat.cid__category_name }}
+                                </td>
+                                <td>
+                                   {{ stat.num_articles }}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+        </div>
+    </div>
+    <hr>
+</div>
+<div class="container-fluid">
+    <form class="d-flex" role="search" action="{% url 'search' %}" method=POST>
+        {% csrf_token %}
+      <input type="text" class="form-control" id="searched" name="searched" placeholder="Search Article">
+      <button class="btn btn-outline-success" type="submit">Search</button>
+    </form>
+</div>
+<br>
+{% if posts %}
+<h3 class="text-center text-info"> {{ search_title }} </h3> 
+<br>
+{% for post in posts %}
+    <div class="card mb-3">
+        <img class="card-img-top" src="{{ post.image.url }}" alt="Card image cap">
+        <div class="card-body">
+            <h5 class="card-title">{{ post.title|truncatechars:70 }}</h5>
+            <p class="card-text">{{ post.content|truncatechars:200|safe }}</p>
+            <a href="{% url 'post-detail' post.aid %}" class="btn btn-primary"> See Details </a>
+        </div>
+        <div class="card-footer text-secondary">
+            <a class="mr-2" href="{% url 'other-people-profile' post.author.username %}">{{ post.author }}</a>|| 
+            {{ post.created|date:"F d, Y" }}
+        </div> 
+    </div>
+{% endfor %}
+{% else %}
+<h3 class="text-center text-info"> No posts are available in your specializaion </h3> 
+{% endif %}
+{% endblock content %}

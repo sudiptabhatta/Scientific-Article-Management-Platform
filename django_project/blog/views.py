@@ -6,6 +6,7 @@ from .forms import PostForm, EditForm, CommentForm
 from django.contrib.auth import get_user_model
 from django.http import HttpResponseRedirect
 from django.urls import reverse
+from django.db.models import Count
 
 User = get_user_model()
 
@@ -173,4 +174,22 @@ def PostLikeView(request, pk):
     # redirect the user to the same post page
     url = reverse('post-detail', kwargs={'pk': pk})
     return HttpResponseRedirect(url)
-    
+
+
+
+def searchView(request):
+    if request.method == 'POST':
+        searched = request.POST['searched']
+        posts = Post.objects.filter(title__contains=searched)
+        search_title = 'Searched Title'
+    else:
+        posts = Post.objects.filter(cid = request.user.cid, approved=True)
+        search_title = 'Suggestions'
+    #count number of articles in each category 
+    # values(): specifies which columns are going to be used to "group by" 
+    # annotate() : specifies an operation over the grouped values
+    # To summarize: group by, generating a queryset of cid, add the annotation (this will add an extra field to the returned values) and finally, you order them by this value
+    statistics = Post.objects.values('cid', 'cid__category_name').annotate(num_articles = Count('cid')).order_by('cid__category_name') # here Post.objects.values('cid') would only give me the pk of the Category. so to get the category_name, so I have to use "__" notation between cid and category_name to get the value from the ForeignKey
+    cat_menu = Category.objects.all()
+    return render(request, 'blog/search.html', {'statistics': statistics, 'cat_menu': cat_menu, 'posts': posts, 'search_title': search_title})
+            

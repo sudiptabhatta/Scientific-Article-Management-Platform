@@ -6,14 +6,22 @@ from blog.models import Category
 User = get_user_model()
 
 class UserRegisterForm(UserCreationForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['cid'].required = True
+
     email = forms.EmailField()
 
-    categories = Category.objects.all()
-    specialization = forms.ModelChoiceField(queryset=categories)
+    # categories = Category.objects.all()
+    # specialization = forms.ModelChoiceField(queryset=categories)
 
     class Meta:
         model = User
-        fields = ['username', 'email', 'password1', 'password2', 'specialization']
+        fields = ['username', 'email', 'password1', 'password2', 'cid']
+
+        widgets = {
+            'cid': forms.Select(attrs={'class': 'form-control'}),
+        }
 
 
 class UserUpdateForm(forms.ModelForm):

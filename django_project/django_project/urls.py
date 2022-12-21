@@ -25,7 +25,8 @@ from blog.views import (
     UserPostDeleteView, 
     categoryView, 
     OtherPeopleProfileView, 
-    PostLikeView
+    PostLikeView,
+    searchView
 )
 
 from django.conf import settings
@@ -46,6 +47,7 @@ urlpatterns = [
     path('user/edit/', user_views.userInfoUpdate, name='user-update'),
     path('profile/<str:username>/', OtherPeopleProfileView.as_view(), name='other-people-profile'),
     path('like/<int:pk>', PostLikeView, name='post-like'),
+    path('search/', searchView, name='search'),
 ]
 
 if settings.DEBUG:
