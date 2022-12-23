@@ -1,8 +1,8 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from .models import Post, Comment, Category
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from .forms import PostForm, EditForm, CommentForm
+from .forms import PostForm, EditForm, CommentForm, CategoryForm
 from django.contrib.auth import get_user_model
 from django.http import HttpResponseRedirect
 from django.urls import reverse
@@ -10,6 +10,7 @@ from django.db.models import Count
 from django.contrib.auth.decorators import login_required
 from users.decorators import allowed_users
 from django.contrib.auth.mixins import AccessMixin
+from django.contrib import messages
 
 
 User = get_user_model()
@@ -39,7 +40,7 @@ class UserPostListView(LoginRequiredMixin, ListView):
 # moderator profile view
 class ModeratorPostListView(LoginRequiredMixin, ListView):
     model = Post
-    template_name = 'blog/moderator.profile.html'
+    template_name = 'blog/moderator-profile.html'
     context_object_name = 'posts'
     ordering = ['-created']
 
@@ -244,3 +245,26 @@ def searchView(request):
     cat_menu = Category.objects.all()
     return render(request, 'blog/search.html', {'statistics': statistics, 'cat_menu': cat_menu, 'posts': posts, 'search_title': search_title})
             
+
+
+@login_required
+@allowed_users(allowed_roles=['admin'])
+def categoryInsert(request):
+    cat_menu = Category.objects.all()
+
+    if request.method == 'POST':
+        form = CategoryForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, f'category saved successfully')
+            return redirect('category-insert')
+        
+    else:
+        form = CategoryForm()
+    return render(request, 'blog/category-insert.html', {'cat_menu': cat_menu, 'form': form})
+
+
+
+
+
+

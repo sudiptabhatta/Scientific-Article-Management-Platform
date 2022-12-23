@@ -1,0 +1,26 @@
+{% extends 'users/base.html' %}
+{% block content %}
+<div class="container">
+<br>
+<div class="row text-center">
+    <div class="col-md-1"> </div>
+    <div class="col-md-6">
+        <div class="card text-info border-info shadow bg-white rounded" style="width:600px">
+            <div class="content-section">
+                <form method="POST">
+                    {% csrf_token %}
+                    <fieldset class="form-group">
+                        <legend class="border-bottom mb-4">Add Category</legend>   
+                        {{ form.as_p }} 
+                    </fieldset>
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary btn-sm btn-block"> Insert </button>
+                    </div>
+                </form>
+            </div>       
+        </div>
+    </div>
+</div>
+</div>
+<br>
+{% endblock content %}

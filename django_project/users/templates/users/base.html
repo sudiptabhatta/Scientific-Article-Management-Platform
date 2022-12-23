@@ -13,7 +13,7 @@
     <link rel="stylesheet" type="text/css" href="{% static 'users/main.css' %}">
 </head>
 <body>
-      <nav class="navbar navbar-expand-md navbar-dark bg-steel" style="background-color: blueviolet;">
+      <nav class="navbar navbar-expand-md navbar-dark bg-steel" style="background-color: #795695;">
         <div class="container">
             <a class="navbar-brand" href="{% url 'home' %}"><img src="/static/users/logo.png" style="height: 30px; width: 150px;"> </a>
           <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggle" aria-controls="navbarToggle" aria-expanded="false" aria-label="Toggle navigation">
@@ -50,6 +50,8 @@
             <div class="navbar-nav mr-auto">
               {% if not user.is_superuser %}
               <a class="nav-item nav-link" href="{% url 'post-create' %}">New Post</a>
+              {% else %}
+              <a class="nav-item nav-link" href="{% url 'category-insert' %}">New Category</a>
               {% endif %}
               <a class="nav-item nav-link" href="{% url 'search' %}">Search</a>
             </div>
