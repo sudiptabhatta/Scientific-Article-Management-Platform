@@ -16,7 +16,6 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from users import views as user_views
-from django.contrib.auth import views as auth_views
 from blog.views import (
     UserPostListView, 
     UserPostDetailView, 
@@ -26,7 +25,8 @@ from blog.views import (
     categoryView, 
     OtherPeopleProfileView, 
     PostLikeView,
-    searchView
+    searchView,
+    ModeratorPostListView
 )
 
 from django.conf import settings
@@ -36,9 +36,10 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path('', user_views.home, name='home'),
     path('register/', user_views.register, name='register'),
-    path('login/', auth_views.LoginView.as_view(template_name = 'users/login.html'), name='login'),
+    path('login/', user_views.login_request, name='login'),
     path('logout/', user_views.logout_request, name='logout'),
-    path('profile/', UserPostListView.as_view(), name='researcher-profile'),
+    path('researcher-profile/', UserPostListView.as_view(), name='researcher-profile'),
+    path('moderator-profile/', ModeratorPostListView.as_view(), name='moderator-profile'),
     path('post/<int:pk>/', UserPostDetailView.as_view(), name='post-detail'),
     path('post/new/', UserPostCreateView.as_view(), name='post-create'),
     path('post/<int:pk>/edit/', UserPostUpdateView.as_view(), name='post-update'),

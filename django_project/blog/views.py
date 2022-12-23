@@ -7,8 +7,13 @@ from django.contrib.auth import get_user_model
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.db.models import Count
+from django.contrib.auth.decorators import login_required
+from users.decorators import allowed_users
+from django.contrib.auth.mixins import AccessMixin
+
 
 User = get_user_model()
+
 
 # get all posts of the loggedin user
 class UserPostListView(LoginRequiredMixin, ListView):
@@ -17,16 +22,37 @@ class UserPostListView(LoginRequiredMixin, ListView):
     context_object_name = 'posts' # if I don't set context_object_name here, it will be object_list to iterate through the list of posts in the html page.
     ordering = ['-created']
 
+
     # return the list of items for this view only from a certain user
     def get_queryset(self):
-        # return Post.objects.filter(author = self.request.user, approved=True) 
-        return Post.objects.filter(author = self.request.user)
+        return Post.objects.filter(author = self.request.user, approved=True) 
     
+    # category list in the navbar
     def get_context_data(self, *args, **kwargs):
         cat_menu = Category.objects.all()
         context = super(UserPostListView, self).get_context_data(*args, **kwargs)
         context['cat_menu'] = cat_menu
         return context
+
+
+
+# moderator profile view
+class ModeratorPostListView(LoginRequiredMixin, ListView):
+    model = Post
+    template_name = 'blog/moderator.profile.html'
+    context_object_name = 'posts'
+    ordering = ['-created']
+
+    def get_queryset(self):
+        return Post.objects.filter(approved=False)
+
+
+    def get_context_data(self, *args, **kwargs):
+        cat_menu = Category.objects.all()
+        context = super(ModeratorPostListView, self).get_context_data(*args, **kwargs)
+        context['cat_menu'] = cat_menu
+        return context
+
 
 
 # display other people's profile
@@ -38,7 +64,7 @@ class OtherPeopleProfileView(LoginRequiredMixin, ListView):
     # return the list of items for this view only from a certain user
     def get_queryset(self):
         user = get_object_or_404(User, username=self.kwargs.get('username')) # if the username given in the url exists, then store that user in the user variable
-        posts = Post.objects.filter(author = user).order_by('-created')
+        posts = Post.objects.filter(author = user, approved=True).order_by('-created')
         return posts
 
     def get_context_data(self, **kwargs):
@@ -49,12 +75,17 @@ class OtherPeopleProfileView(LoginRequiredMixin, ListView):
         context['cat_menu'] = cat_menu
         return context
 
-    
+
+
+
+@login_required
+@allowed_users(allowed_roles=['admin', 'researcher'])
 # view posts of a category
 def categoryView(request, cats):
     category_posts = Post.objects.filter(cid=cats)
     cat_menu = Category.objects.all()
     return render(request, 'blog/category.html', {'category_posts': category_posts, 'cat_menu': cat_menu})
+
 
 
 # see details of a post create by a user
@@ -91,9 +122,8 @@ class UserPostDetailView(LoginRequiredMixin, DetailView):
 
 
 
-
 # create post
-class UserPostCreateView(LoginRequiredMixin, CreateView):
+class UserPostCreateView(LoginRequiredMixin, AccessMixin, CreateView):
     model = Post
     form_class = PostForm
     template_name = 'blog/post_create.html'
@@ -109,6 +139,18 @@ class UserPostCreateView(LoginRequiredMixin, CreateView):
         context = super(UserPostCreateView, self).get_context_data(*args, **kwargs)
         context['cat_menu'] = cat_menu
         return context
+
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            # This will redirect to the login view
+            return self.handle_no_permission()
+        if not self.request.user.groups.filter(name='researcher').exists():
+            # Redirect the user to somewhere else - add your URL here
+            url = reverse('moderator-profile')
+            return HttpResponseRedirect(url)
+
+        # Checks pass, let http method handlers process the request
+        return super().dispatch(request, *args, **kwargs)
 
 
 
@@ -140,17 +182,10 @@ class UserPostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 
 
 
-
 # delete post
-class UserPostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+class UserPostDeleteView(LoginRequiredMixin, AccessMixin, DeleteView):
     model = Post
     success_url = '/profile/' 
-
-    def test_func(self):
-        post = self.get_object() 
-        if self.request.user == post.author:
-            return True
-        return False
 
     # to get category list in the navbar
     def get_context_data(self, *args, **kwargs):
@@ -158,8 +193,22 @@ class UserPostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         context = super(UserPostDeleteView, self).get_context_data(*args, **kwargs)
         context['cat_menu'] = cat_menu
         return context
+    
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            # This will redirect to the login view
+            return self.handle_no_permission()
+        if not self.request.user.groups.filter(name='researcher').exists() and not self.request.user.groups.filter(name='admin'):
+            # Redirect the user to somewhere else - add your URL here
+            url = reverse('home')
+            return HttpResponseRedirect(url)
+
+        # Checks pass, let http method handlers process the request
+        return super().dispatch(request, *args, **kwargs)
 
 
+
+@allowed_users(allowed_roles=['admin', 'researcher'])
 # post like view
 def PostLikeView(request, pk):
     post = Post.objects.get(aid=pk) 
@@ -177,6 +226,8 @@ def PostLikeView(request, pk):
 
 
 
+@login_required
+@allowed_users(allowed_roles=['admin', 'researcher'])
 def searchView(request):
     if request.method == 'POST':
         searched = request.POST['searched']

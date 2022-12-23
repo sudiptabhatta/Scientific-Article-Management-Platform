@@ -17,6 +17,7 @@
             <h5 class="card-title">{{ post.title|truncatechars:70 }}</h5>
             <p class="card-text">{{ post.content|truncatechars:200|safe }}</p>
             <a href="{% url 'post-detail' post.aid %}" class="btn btn-primary"> See Details </a>
+            <a href="{% url 'post-delete' post.aid %}" class="btn btn-primary"> Delete Post </a>
         </div>
         <div class="card-footer text-secondary">
             <a class="mr-2" href="{% url 'other-people-profile' post.author.username %}">{{ post.author }}</a>|| 
